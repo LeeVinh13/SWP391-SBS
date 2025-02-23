@@ -32,12 +32,15 @@ public class RoleService {
     }
     public void delete(int id){
         Role role = roleRepository.findById(id).orElseThrow(
-                () -> new RuntimeException("Role not found"));
+                () -> new AppException(ErrorCode.ROLE_NOT_FOUND));
         roleRepository.delete(role);
     }
     public List<RoleResponse> getAllRole(){
         //lỗi null
         List<Role> roles = roleRepository.findAll();
+        if(roles.isEmpty()){
+            throw new RuntimeException("Role not found");
+        }
         return roles.stream().map(role -> roleMapper.toRoleResponse(role)).toList();
     }
 

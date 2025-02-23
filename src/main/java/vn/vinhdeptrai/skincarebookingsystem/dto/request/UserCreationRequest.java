@@ -13,6 +13,6 @@ import java.util.Set;
 @Builder
 @FieldDefaults(level = AccessLevel.PRIVATE)
 public class UserCreationRequest {
-    String username, password, fullname, phone;
+    String username, password, fullname, phone, email;
 
 }
