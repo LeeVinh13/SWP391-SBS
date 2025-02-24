@@ -1,6 +1,7 @@
 package vn.vinhdeptrai.skincarebookingsystem.config;
 
 import com.nimbusds.jose.JOSEException;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.oauth2.jose.jws.MacAlgorithm;
@@ -16,21 +17,29 @@ import javax.crypto.spec.SecretKeySpec;
 import java.text.ParseException;
 import java.util.Objects;
 
+@Slf4j
 @Component
 public class CustomJwtDecoder implements JwtDecoder {
-    @Value("${singerkey}")
+    @Value("${signerkey}")
     private String signerKey;
+
     @Autowired
     private AuthenticationService authenticationService;
 
     private NimbusJwtDecoder nimbusJwtDecoder = null;
-
+    /*
+        giải mã JWT Token, xác thực JWT = secret key(SIGNERKEY)  đảm bảo phù hợp
+    */
     @Override
     public Jwt decode(String token) throws JwtException {
 
         try {
-            var response = authenticationService.introspect(IntrospectRequest.builder().token(token).build());
-            if (!response.isValid()) throw new JwtException("Token invalid");
+            log.warn(token);
+            var response = authenticationService.introspect(IntrospectRequest.builder()
+                                                                                .token(token)
+                                                                                .build());
+            if (!response.isValid())
+                throw new JwtException("Token invalid");
         } catch (JOSEException | ParseException e) {
             throw new JwtException(e.getMessage());
         }

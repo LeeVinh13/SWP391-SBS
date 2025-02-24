@@ -9,10 +9,12 @@ import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
 import lombok.experimental.NonFinal;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.util.CollectionUtils;
+import vn.vinhdeptrai.skincarebookingsystem.constant.PredefinedRole;
 import vn.vinhdeptrai.skincarebookingsystem.dto.request.AuthenticationRequest;
 import vn.vinhdeptrai.skincarebookingsystem.dto.request.IntrospectRequest;
 import vn.vinhdeptrai.skincarebookingsystem.dto.request.LogoutRequest;
@@ -36,7 +38,7 @@ import java.util.Date;
 import java.util.Set;
 import java.util.StringJoiner;
 import java.util.UUID;
-
+@Slf4j
 @Service
 @RequiredArgsConstructor
 @FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)
@@ -45,8 +47,8 @@ public class AuthenticationService {
     RoleRepository roleRepository;
     //SIGNER KEY là chuỗi secret key, dùng để ký JWT or mã hóa data
     @NonFinal
-    @Value("${singerkey}")
-    String SINGER_KEY;
+    @Value("${signerkey}")
+    String SIGNERKEY;
     PasswordEncoder passwordEncoder;
     InvalidatedTokenRepository invalidatedTokenRepository;
     // hàm xác thực khi người dùng đăng nhập hệ thống
@@ -76,7 +78,7 @@ public class AuthenticationService {
                 .fullname(registerRequest.getFullname())
                 .password(passwordEncoder.encode(registerRequest.getPassword()))
                 .build();
-        Role role = roleRepository.findByName("USER").orElseThrow(() -> new AppException(ErrorCode.ROLE_NOT_FOUND));
+        Role role = roleRepository.findByName(PredefinedRole.USER_ROLE).orElseThrow(() -> new AppException(ErrorCode.ROLE_NOT_FOUND));
         user.setRole(Set.of(role));
         userRepository.save(user);
         return RegisterResponse.builder()
@@ -123,7 +125,7 @@ public class AuthenticationService {
         Payload payload = new Payload(jwtClaimsSet.toJSONObject());
         JWSObject jwsObject = new JWSObject(header, payload);
         try {
-            jwsObject.sign(new MACSigner(SINGER_KEY.getBytes()));
+            jwsObject.sign(new MACSigner(SIGNERKEY.getBytes()));
         } catch (JOSEException e) {
             throw new RuntimeException(e);
         }
@@ -131,11 +133,11 @@ public class AuthenticationService {
     }
 
     private SignedJWT verifyToken(String token) throws ParseException, JOSEException {
-        JWSVerifier verifier = new MACVerifier(SINGER_KEY.getBytes());
+        JWSVerifier verifier = new MACVerifier(SIGNERKEY.getBytes());
         SignedJWT signedJWT = SignedJWT.parse(token);
         Date expirationDate = signedJWT.getJWTClaimsSet().getExpirationTime();
         boolean verified = signedJWT.verify(verifier);
-        if(expirationDate.before(new Date()) || !verified) {
+        if(expirationDate.before(new Date()) && !verified) {
             throw new AppException(ErrorCode.UNAUTHENTICATED);
         }
         if(invalidatedTokenRepository.existsById(signedJWT.getJWTClaimsSet().getJWTID()))

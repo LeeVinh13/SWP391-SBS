@@ -39,7 +39,7 @@ public class RoleService {
         //lỗi null
         List<Role> roles = roleRepository.findAll();
         if(roles.isEmpty()){
-            throw new RuntimeException("Role not found");
+            throw new AppException(ErrorCode.ROLE_NOT_FOUND);
         }
         return roles.stream().map(role -> roleMapper.toRoleResponse(role)).toList();
     }

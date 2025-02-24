@@ -1,5 +1,6 @@
 package vn.vinhdeptrai.skincarebookingsystem.config;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -26,22 +27,20 @@ public class SecurityConfig {
     String[] PUBLIC_ENDPOINTS ={
         "/api/users/create","/api/auth/**"
     };
-    @Value("${singerkey}")
+    @Value("${signerkey}")
     private String SIGNERKEY;
-    /* xử lý authorization
-     */
+
     @Bean
-    public SecurityFilterChain filterChain(HttpSecurity http, JwtDecoder jwtDecoder) throws Exception {
+    public SecurityFilterChain filterChain(HttpSecurity http, CustomJwtDecoder customJwtDecoder) throws Exception {
         http
                 .authorizeHttpRequests(authorize ->
                         authorize.requestMatchers(PUBLIC_ENDPOINTS).permitAll()
-
                         .anyRequest().authenticated()
                 );
-        //JWT Token được gửi kèm theo request (thường trong header Authorization: Bearer <token>).=
+        //JWT Token được gửi kèm theo request (thường trong header Authorization: Bearer <token>).
         http.oauth2ResourceServer(oauth2 ->
                         oauth2.jwt(jwtConfigurer ->
-                                jwtConfigurer.decoder(jwtDecoder())
+                                jwtConfigurer.decoder(customJwtDecoder)
                                               .jwtAuthenticationConverter(jwtAuthenticationConverter()))
                                 .authenticationEntryPoint(new JwtAuthenticationEntryPoint())
         );
@@ -58,16 +57,6 @@ public class SecurityConfig {
         jwtAuthenticationConverter.setJwtGrantedAuthoritiesConverter(converter);
 
         return jwtAuthenticationConverter;
-    }
-   /*
-        giải mã JWT Token, xác thực JWT = secret key(SIGNERKEY)  đảm bảo phù hợp
-    */
-    @Bean
-    public JwtDecoder jwtDecoder() {
-        SecretKeySpec secretKeySpec = new SecretKeySpec(SIGNERKEY.getBytes(), "HS512");
-        return NimbusJwtDecoder.withSecretKey(secretKeySpec)
-                .macAlgorithm(MacAlgorithm.HS512)
-                .build();
     }
 
     @Bean

@@ -23,7 +23,6 @@ public class RegisterRequest {
     String confirmPassword;
     @Email
     String email;
-    @NotNull
     String fullname;
     String phone;
 
