@@ -19,6 +19,6 @@ public class CategoryService {
     private String name;
     private String description;
     private boolean signature;
-    @OneToMany(mappedBy = "categoryService")
+    @OneToMany(mappedBy = "category")
     private Set<Service> services;
 }
