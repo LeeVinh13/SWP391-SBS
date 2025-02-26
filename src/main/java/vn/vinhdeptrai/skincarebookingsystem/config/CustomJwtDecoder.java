@@ -17,7 +17,6 @@ import javax.crypto.spec.SecretKeySpec;
 import java.text.ParseException;
 import java.util.Objects;
 
-@Slf4j
 @Component
 public class CustomJwtDecoder implements JwtDecoder {
     @Value("${signerkey}")
@@ -34,7 +33,6 @@ public class CustomJwtDecoder implements JwtDecoder {
     public Jwt decode(String token) throws JwtException {
 
         try {
-            log.warn(token);
             var response = authenticationService.introspect(IntrospectRequest.builder()
                                                                                 .token(token)
                                                                                 .build());

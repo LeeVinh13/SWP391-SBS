@@ -28,13 +28,13 @@ public class RoleController {
     }
 
     @PostMapping("/create")
-    public ApiResponse<RoleResponse> createUser(@RequestBody RoleRequest roleRequest) {
+    public ApiResponse<RoleResponse> create(@RequestBody RoleRequest roleRequest) {
         ApiResponse<RoleResponse> apiRespone = new ApiResponse<>();
         apiRespone.setResult(roleService.create(roleRequest));
         return apiRespone;
     }
     @DeleteMapping("/delete/{roleId}")
-    public ApiResponse<RoleResponse> deleteUser(@PathVariable int roleId) {
+    public ApiResponse<RoleResponse> delete(@PathVariable int roleId) {
         roleService.delete(roleId);
         return ApiResponse.<RoleResponse>builder()
                 .build();

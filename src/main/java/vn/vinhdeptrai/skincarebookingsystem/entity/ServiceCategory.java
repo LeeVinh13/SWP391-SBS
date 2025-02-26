@@ -3,24 +3,22 @@ package vn.vinhdeptrai.skincarebookingsystem.entity;
 import jakarta.persistence.*;
 import lombok.*;
 
+import java.util.Set;
+
 @Getter
 @Setter
 @Entity
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-@Table(name ="service")
-public class Service {
+@Table(name ="categoryService")
+public class ServiceCategory{
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int id;
     private String name;
     private String description;
-    private long price;
-    private String duration;
-    private String thumbnail; // lưu URL ảnh từ cloudinary
-    @ManyToOne
-    @JoinColumn(name ="categoryId")
-    private ServiceCategory category;
-
+    private boolean signature;
+    @OneToMany(mappedBy = "category")
+    private Set<Service> services;
 }
