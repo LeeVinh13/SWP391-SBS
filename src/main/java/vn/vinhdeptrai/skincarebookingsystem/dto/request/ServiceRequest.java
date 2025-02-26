@@ -2,6 +2,7 @@ package vn.vinhdeptrai.skincarebookingsystem.dto.request;
 
 import lombok.*;
 import lombok.experimental.FieldDefaults;
+import org.springframework.web.multipart.MultipartFile;
 
 @Getter
 @Setter
@@ -14,5 +15,6 @@ public class ServiceRequest {
     String description;
     long price;
     String duration;
-    String image;
+    MultipartFile thumbnail;
+    int categoryId;
 }

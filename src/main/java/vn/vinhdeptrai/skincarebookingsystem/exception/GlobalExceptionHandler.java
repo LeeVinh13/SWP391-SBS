@@ -14,11 +14,13 @@ import java.util.Map;
 import java.util.Objects;
 
 import lombok.extern.slf4j.Slf4j;
+@Slf4j
 @ControllerAdvice
 public class GlobalExceptionHandler {
     private static final String MIN_ATTRIBUTE = "min";
     @ExceptionHandler(Exception.class)
     public ResponseEntity<ApiResponse> handlingRuntimeException(Exception exception) {
+        exception.printStackTrace();
         ApiResponse apiRespone = ApiResponse.builder()
                 .code(ErrorCode.UNCATEGORIZED_EXCEPTION.getCode())
                 .message(ErrorCode.UNCATEGORIZED_EXCEPTION.getMessage())

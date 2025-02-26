@@ -18,8 +18,8 @@ public class Service {
     private String description;
     private long price;
     private String duration;
-    private String image;
+    private String thumbnail; // lưu URL ảnh từ cloudinary
     @ManyToOne
     @JoinColumn(name ="categoryId")
-    private CategoryService category;
+    private ServiceCategory category;
 }

@@ -12,14 +12,13 @@ public enum ErrorCode {
     INVALID_PASSWORD(1003, "Password must be at least {min} characters", HttpStatus.BAD_REQUEST),
     INVALID_CONFIRM_PASSWORD(1004, "Confirm Password and Password does not match", HttpStatus.BAD_REQUEST),
 
-    USER_NOT_FOUND(1005,"USER NOT FOUND!", HttpStatus.NOT_FOUND),
-    ROLE_NOT_FOUND(1006,"ROLE NOT FOUND!", HttpStatus.NOT_FOUND),
+    UNAUTHENTICATED(1005,"UNAUTHENTICATED!", HttpStatus.UNAUTHORIZED),
+    UNAUTHORIZED(1006, "You do not have permission", HttpStatus.FORBIDDEN),
+
+    USER_NOT_FOUND(1007,"USER NOT FOUND!", HttpStatus.NOT_FOUND),
+    ROLE_NOT_FOUND(1008,"ROLE NOT FOUND!", HttpStatus.NOT_FOUND),
     SERVICE_NOT_FOUND(1009,"SERVICE NOT FOUND!", HttpStatus.NOT_FOUND),
-    CATE_SERVICE_NOT_FOUND(1010,"CATEGORY_SERVICE NOT FOUND!", HttpStatus.NOT_FOUND),
-
-
-    UNAUTHENTICATED(1007,"UNAUTHENTICATED!", HttpStatus.UNAUTHORIZED),
-    UNAUTHORIZED(1008, "You do not have permission", HttpStatus.FORBIDDEN),
+    SERVICE_CATE_NOT_FOUND(1010,"SERVICE CATEGORY NOT FOUND!", HttpStatus.NOT_FOUND),
     ;
     public int code;
     public String message;

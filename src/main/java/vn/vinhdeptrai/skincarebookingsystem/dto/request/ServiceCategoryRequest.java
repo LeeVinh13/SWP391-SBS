@@ -8,9 +8,9 @@ import lombok.experimental.FieldDefaults;
 @NoArgsConstructor
 @Builder
 @FieldDefaults(level = AccessLevel.PRIVATE)
-public class CategoryServiceRequest {
-    int id;
+public class ServiceCategoryRequest {
     String name;
     String description;
     boolean signature;
+
 }

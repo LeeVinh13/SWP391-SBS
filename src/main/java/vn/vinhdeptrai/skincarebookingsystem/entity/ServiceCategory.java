@@ -12,7 +12,7 @@ import java.util.Set;
 @NoArgsConstructor
 @AllArgsConstructor
 @Table(name ="categoryService")
-public class CategoryService {
+public class ServiceCategory{
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int id;
