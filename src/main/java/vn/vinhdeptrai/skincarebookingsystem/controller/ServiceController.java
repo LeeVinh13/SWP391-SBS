@@ -33,17 +33,18 @@ public class ServiceController {
                 .build();
     }
     @PostMapping(value="/create", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
-    public ApiResponse<ServiceResponse> create(@RequestPart("service") ServiceRequest request,
+    public ApiResponse<ServiceResponse> create(@RequestPart("service") ServiceRequest serviceRequest,
                                                @RequestPart(value="thumbnail", required = false) MultipartFile thumbnail) throws IOException {
 
         return ApiResponse.<ServiceResponse>builder()
-                .result(service.create(request,thumbnail))
+                .result(service.create(serviceRequest,thumbnail))
                 .build();
     }
     @PutMapping("/update/{id}")
-    ApiResponse<ServiceResponse> update(@PathVariable int id, @RequestBody ServiceRequest serviceRequest) {
+    ApiResponse<ServiceResponse> update(@PathVariable int id,@RequestPart("service") ServiceRequest serviceRequest,
+                                        @RequestPart("thumbnail") MultipartFile thumbnail) throws IOException {
         return ApiResponse.<ServiceResponse>builder()
-                .result(service.update(serviceRequest,id))
+                .result(service.update(serviceRequest,id, thumbnail))
                 .build();
     }
 

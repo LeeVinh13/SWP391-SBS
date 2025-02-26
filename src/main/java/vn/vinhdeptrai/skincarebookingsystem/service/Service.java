@@ -46,11 +46,14 @@ public class Service {
         service.setThumbnail(cloudinaryService.uploadImage(file));
         return serviceMapper.toServiceResponse(serviceRepository.save(service));
     }
-    public ServiceResponse update(ServiceRequest serviceRequest, int id) {
+    public ServiceResponse update(ServiceRequest serviceRequest, int id, MultipartFile file) throws IOException {
         vn.vinhdeptrai.skincarebookingsystem.entity.Service service = serviceRepository.findById(id).orElseThrow(
                 () -> new AppException(ErrorCode.SERVICE_NOT_FOUND)
         );
+        ServiceCategory serviceCategory = serviceCategoryRepository.findById(serviceRequest.getCategoryId()).orElseThrow(
+                () -> new AppException(ErrorCode.SERVICE_CATE_NOT_FOUND));
         serviceMapper.updateService(service, serviceRequest);
+        service.setThumbnail(cloudinaryService.uploadImage(file));
         return serviceMapper.toServiceResponse(serviceRepository.save(service));
     }
     public void delete(int id) {
