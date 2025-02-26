@@ -22,4 +22,5 @@ public class Service {
     @ManyToOne
     @JoinColumn(name ="categoryId")
     private ServiceCategory category;
+
 }
