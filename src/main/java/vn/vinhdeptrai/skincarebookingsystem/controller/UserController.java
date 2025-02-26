@@ -23,7 +23,7 @@ import vn.vinhdeptrai.skincarebookingsystem.service.UserService;
 public class UserController {
     UserService userService;
     @GetMapping
-    public ApiResponse<List<UserResponse>> getAllUsers() {
+    public ApiResponse<List<UserResponse>> getAll() {
         return ApiResponse.<List<UserResponse>>builder()
                 .result(userService.getAllUser())
                 .build();
@@ -36,13 +36,13 @@ public class UserController {
                 .build();
     }
     @PostMapping("/create")
-    public ApiResponse<UserResponse> createUser(@RequestBody UserCreationRequest request) {
+    public ApiResponse<UserResponse> create(@RequestBody UserCreationRequest request) {
         ApiResponse<UserResponse> apiRespone = new ApiResponse<>();
         apiRespone.setResult(userService.create(request));
         return apiRespone;
     }
     @PutMapping("/update/{userId}")
-    ApiResponse<UserResponse> updateUser(@PathVariable int userId, @RequestBody UserUpdateRequest userUpdateRequest) {
+    ApiResponse<UserResponse> update(@PathVariable int userId, @RequestBody UserUpdateRequest userUpdateRequest) {
         return ApiResponse.<UserResponse>builder()
                 .result(userService.update(userId,userUpdateRequest))
                 .build();
