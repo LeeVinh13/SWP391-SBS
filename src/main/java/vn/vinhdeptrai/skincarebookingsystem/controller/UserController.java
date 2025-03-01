@@ -52,6 +52,12 @@ public class UserController {
     void deleteUser(@PathVariable int userId) {
         this.userService.delete(userId);
     }
+    @GetMapping("/myInfor")
+    public ApiResponse<UserResponse> myInfor(){
+        return ApiResponse.<UserResponse>builder()
+                .result(userService.myInfor())
+                .build();
+    }
 
 
 }
