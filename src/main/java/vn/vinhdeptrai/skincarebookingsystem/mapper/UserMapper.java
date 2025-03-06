@@ -9,7 +9,7 @@ import vn.vinhdeptrai.skincarebookingsystem.dto.response.UserResponse;
 import vn.vinhdeptrai.skincarebookingsystem.entity.User;
 
 @Mapper(componentModel = "spring")
-public interface UserMapper {
+public interface    UserMapper {
     User toUser(UserCreationRequest userCreationRequest);
     UserResponse toUserResponse(User user);
     @Mapping(target = "role", ignore = true)

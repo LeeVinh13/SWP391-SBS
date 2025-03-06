@@ -36,9 +36,7 @@ public class SecurityConfig {
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http, CustomJwtDecoder customJwtDecoder) throws Exception {
         http
-                .authorizeHttpRequests(authorize ->
-                        authorize.requestMatchers(PUBLIC_ENDPOINTS).permitAll()
-                        .anyRequest().authenticated()
+                .authorizeHttpRequests(authorize ->authorize.anyRequest().permitAll()
                 );
         //JWT Token được gửi kèm theo request (thường trong header Authorization: Bearer <token>).
         http.oauth2ResourceServer(oauth2 ->
