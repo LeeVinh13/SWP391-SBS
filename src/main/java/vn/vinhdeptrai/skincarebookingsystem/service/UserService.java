@@ -37,7 +37,7 @@ public class UserService {
     UserMapper userMapper;
     RoleService roleService;
     RoleRepository roleRepository;
-    PasswordEncoder passwordEncoder;
+//    PasswordEncoder passwordEncoder;
 
     public UserResponse create(UserCreationRequest userCreationRequest)  {
         if(userRepository.existsByUsername((userCreationRequest.getUsername()))){
@@ -47,14 +47,14 @@ public class UserService {
         Role role = roleRepository.findByName(PredefinedRole.USER_ROLE).orElseThrow(
                 () -> new AppException(ErrorCode.ROLE_NOT_FOUND));
         user.setRole(Set.of(role));
-        user.setPassword(passwordEncoder.encode(userCreationRequest.getPassword()));
+//        user.setPassword(passwordEncoder.encode(userCreationRequest.getPassword()));
         userRepository.save(user);
         return userMapper.toUserResponse(user);
     }
     public UserResponse update(int id, UserUpdateRequest userUpdateRequest){
         User user = userRepository.findById(id).orElseThrow(() -> new AppException(ErrorCode.USER_NOT_FOUND));
         userMapper.updateUser(user, userUpdateRequest);
-        user.setPassword(passwordEncoder.encode(userUpdateRequest.getPassword()));
+//        user.setPassword(passwordEncoder.encode(userUpdateRequest.getPassword()));
         Set<Role> roles = userUpdateRequest.getRole().stream().map(roleName -> roleRepository.findByName(roleName)
                 .orElseThrow(() -> new AppException(ErrorCode.ROLE_NOT_FOUND))).collect(Collectors.toSet());
         user.setRole((roles));

@@ -14,6 +14,7 @@ import vn.vinhdeptrai.skincarebookingsystem.exception.ErrorCode;
 import vn.vinhdeptrai.skincarebookingsystem.mapper.ServiceMapper;
 import vn.vinhdeptrai.skincarebookingsystem.repository.ServiceCategoryRepository;
 import vn.vinhdeptrai.skincarebookingsystem.repository.ServiceRepository;
+import vn.vinhdeptrai.skincarebookingsystem.util.CloudinaryUtil;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -27,7 +28,7 @@ import java.util.Optional;
 public class Service {
     ServiceRepository serviceRepository;
     ServiceMapper serviceMapper;
-    CloudinaryService cloudinaryService;
+    CloudinaryUtil cloudinaryUtil;
     ServiceCategoryRepository serviceCategoryRepository;
     public List<ServiceResponse> getAll() {
         return serviceRepository.findAll().stream().map(service -> serviceMapper.toServiceResponse(service)).toList();
@@ -42,8 +43,7 @@ public class Service {
         ServiceCategory serviceCategory = serviceCategoryRepository.findById(serviceRequest.getCategoryId()).orElseThrow(
                 () -> new AppException(ErrorCode.SERVICE_CATE_NOT_FOUND));
         vn.vinhdeptrai.skincarebookingsystem.entity.Service service = serviceMapper.toService(serviceRequest);
-        log.info(cloudinaryService.uploadImage(file));
-        service.setThumbnail(cloudinaryService.uploadImage(file));
+        service.setThumbnail(cloudinaryUtil.uploadImage(file));
         return serviceMapper.toServiceResponse(serviceRepository.save(service));
     }
     public ServiceResponse update(ServiceRequest serviceRequest, int id, MultipartFile file) throws IOException {
@@ -53,7 +53,7 @@ public class Service {
         ServiceCategory serviceCategory = serviceCategoryRepository.findById(serviceRequest.getCategoryId()).orElseThrow(
                 () -> new AppException(ErrorCode.SERVICE_CATE_NOT_FOUND));
         serviceMapper.updateService(service, serviceRequest);
-        service.setThumbnail(cloudinaryService.uploadImage(file));
+        service.setThumbnail(cloudinaryUtil.uploadImage(file));
         return serviceMapper.toServiceResponse(serviceRepository.save(service));
     }
     public void delete(int id) {

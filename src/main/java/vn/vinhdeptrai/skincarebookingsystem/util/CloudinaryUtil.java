@@ -1,4 +1,4 @@
-package vn.vinhdeptrai.skincarebookingsystem.service;
+package vn.vinhdeptrai.skincarebookingsystem.util;
 
 import com.cloudinary.Cloudinary;
 import com.cloudinary.utils.ObjectUtils;
@@ -7,6 +7,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
+import org.springframework.stereotype.Component;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -15,19 +16,17 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.util.Collections;
 import java.util.UUID;
 
-@Service
 @RequiredArgsConstructor
 @FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)
 @Slf4j
-public class CloudinaryService {
-    private final Cloudinary cloudinary;
+@Component
+public class CloudinaryUtil {
+    Cloudinary cloudinary;
 
     public String uploadImage(MultipartFile file) throws IOException {
         assert file.getOriginalFilename() != null;
-        log.info("Uploading file: " + file.getOriginalFilename());
         String publicValue = generatePublicValue(file.getOriginalFilename());
         String extension = getFileName(file.getOriginalFilename())[1];
         File fileUpload = convert(file);
