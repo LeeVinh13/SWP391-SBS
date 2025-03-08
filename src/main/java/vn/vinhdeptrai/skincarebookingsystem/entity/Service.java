@@ -5,6 +5,7 @@ import lombok.*;
 import lombok.experimental.FieldDefaults;
 
 import java.util.List;
+import java.util.Set;
 
 @Getter
 @Setter
@@ -28,4 +29,7 @@ public class Service {
     ServiceCategory category;
     @OneToMany(mappedBy = "service")
     List<Appointment> appointments;
+
+    @OneToMany(mappedBy = "service")
+    Set<ServiceRecommendation> recommendations;
 }
