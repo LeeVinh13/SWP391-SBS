@@ -23,9 +23,8 @@ public class Question {
     String question;
 
     @OneToMany(mappedBy = "question", cascade = CascadeType.ALL, orphanRemoval = true)
-    Set<Answer> answers; //xóa question là xóa luôn câu hỏi
+    Set<Answer> answers; //xóa question là xóa luôn câu trả lời
 
-    @ManyToOne
-    @JoinColumn(name = "quiz_id", nullable = false)
-    Quiz quiz;
+    @ManyToMany(mappedBy = "questions")
+    Set<Quiz> quizzes;
 }

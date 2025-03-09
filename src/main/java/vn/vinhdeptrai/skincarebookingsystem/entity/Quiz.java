@@ -25,7 +25,11 @@ public class Quiz {
     @JoinColumn(name = "category_id", unique = true, nullable = false) // mỗi category một bài quiz
     ServiceCategory category;
 
-    @OneToMany
-    @JoinColumn(name = "quiz_id") //xóa quiz không xóa câu do dùng chung - Ex: tình trạng nặng nhẹ?
-    Set<Question> questions; // bộ câu hỏi cho quiz thuộc một category nhất định
+    @ManyToMany // một câu hỏi được dùng chung cho nhiều quiz
+    @JoinTable(
+            name = "quiz_question",
+            joinColumns = @JoinColumn(name = "quiz_id"),
+            inverseJoinColumns = @JoinColumn(name = "question_id")
+    )
+    Set<Question> questions; // một quiz có nhiều câu hỏi
 }

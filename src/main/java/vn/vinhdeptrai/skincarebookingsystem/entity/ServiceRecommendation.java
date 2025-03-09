@@ -21,8 +21,8 @@ public class ServiceRecommendation {
     @JoinColumn(name = "quiz_id", nullable = false)
     Quiz quiz;
 
-    @ManyToOne
-    @JoinColumn(name = "service_id", nullable = false)
+    @OneToOne
+    @JoinColumn(name = "service_id", nullable = false, unique = true)
     Service service;
 
     int minScore;
