@@ -40,12 +40,7 @@ public class SlotController {
                 .build();
     }
 
-    @PostMapping("/generate/date-range")
-    public ApiResponse<List<SlotResponse>> generateSlotForDateRange(@RequestBody SlotRequest slotRequest) {
-        return ApiResponse.<List<SlotResponse>>builder()
-                .result(slotService.generateSlotsForDateRange(slotRequest))
-                .build();
-    }
+
     @DeleteMapping("/delete/{id}")
     public ApiResponse<Void> delete(@PathVariable int id) {
         slotService.deleteSlot(id);
