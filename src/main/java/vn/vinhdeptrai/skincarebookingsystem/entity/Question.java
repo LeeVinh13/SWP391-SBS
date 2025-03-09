@@ -23,7 +23,7 @@ public class Question {
     String question;
 
     @OneToMany(mappedBy = "question", cascade = CascadeType.ALL, orphanRemoval = true)
-    Set<Answer> answers;
+    Set<Answer> answers; //xóa question là xóa luôn câu hỏi
 
     @ManyToOne
     @JoinColumn(name = "quiz_id", nullable = false)

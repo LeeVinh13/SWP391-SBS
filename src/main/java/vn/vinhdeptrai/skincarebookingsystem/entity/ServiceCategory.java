@@ -25,7 +25,4 @@ public class ServiceCategory{
     Set<Service> services;
     @ManyToMany(mappedBy = "categories")
     Set<Therapist> therapists;
-
-    @OneToOne(mappedBy = "category", cascade = CascadeType.ALL, orphanRemoval = true)
-    Quiz quiz; // một category chỉ cần 1 quiz để đề xuất các service
 }

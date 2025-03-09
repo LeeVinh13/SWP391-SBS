@@ -29,7 +29,4 @@ public class Service {
     ServiceCategory category;
     @OneToMany(mappedBy = "service")
     List<Appointment> appointments;
-
-    @OneToMany(mappedBy = "service")
-    Set<ServiceRecommendation> recommendations;
 }
