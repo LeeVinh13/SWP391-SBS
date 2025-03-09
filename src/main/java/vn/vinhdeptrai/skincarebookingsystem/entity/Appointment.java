@@ -30,14 +30,8 @@ public class Appointment {
     @JoinColumn(name ="userId")
     User user;
 
-//    @ManyToOne
-//    @JoinColumn(name = "slotId")
-//    Slot slot;
-
-    @ManyToOne
-    @JoinColumn(name ="therapistId")
-    Therapist therapist;
-
+    @OneToOne
+    SlotDetail slotDetail;
     @ManyToOne
     @JoinColumn(name = "serviceId")
     Service service;

@@ -6,6 +6,7 @@ import vn.vinhdeptrai.skincarebookingsystem.dto.response.SlotResponse;
 import vn.vinhdeptrai.skincarebookingsystem.entity.Slot;
 import vn.vinhdeptrai.skincarebookingsystem.entity.Therapist;
 import vn.vinhdeptrai.skincarebookingsystem.entity.User;
+import vn.vinhdeptrai.skincarebookingsystem.enums.SlotStatus;
 
 import java.time.LocalDate;
 import java.time.LocalTime;
@@ -13,12 +14,9 @@ import java.util.Collection;
 import java.util.List;
 import java.util.Optional;
 @Repository
-
 public interface SlotRepository extends JpaRepository<Slot, Integer> {
-
     boolean existsByDateAndTime(LocalDate date, LocalTime time);
-
     List<Slot> findByDate(LocalDate date);
 
-    List<Slot> findByTherapists(Therapist therapists);
+    List<Slot> findBySlotDetails_TherapistAndSlotDetails_Status(Therapist slotDetailsTherapist, SlotStatus slotDetailsStatus);
 }
