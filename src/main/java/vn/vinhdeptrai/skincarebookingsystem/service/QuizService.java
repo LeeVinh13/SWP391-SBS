@@ -8,6 +8,7 @@ import org.springframework.stereotype.Service;
 import vn.vinhdeptrai.skincarebookingsystem.dto.request.AddQuestionsToQuizRequest;
 import vn.vinhdeptrai.skincarebookingsystem.dto.request.QuizCreationRequest;
 import vn.vinhdeptrai.skincarebookingsystem.dto.request.QuizUpdateRequest;
+import vn.vinhdeptrai.skincarebookingsystem.dto.request.RemoveQuestionsToQuizRequest;
 import vn.vinhdeptrai.skincarebookingsystem.dto.response.QuizResponse;
 import vn.vinhdeptrai.skincarebookingsystem.entity.Question;
 import vn.vinhdeptrai.skincarebookingsystem.entity.Quiz;
@@ -43,7 +44,7 @@ public class QuizService {
         return quizMapper.toQuizResponse(quiz);
     }
 
-    @PreAuthorize("hasAnyRole('ADMIN')")
+    @PreAuthorize("hasRole('ADMIN')")
     public QuizResponse create(QuizCreationRequest request) {
         ServiceCategory serviceCategory = serviceCategoryRepository.findById(request.getCate_id())
                 .orElseThrow(() -> new AppException(ErrorCode.SERVICE_CATE_NOT_FOUND));
@@ -60,7 +61,7 @@ public class QuizService {
         return quizMapper.toQuizResponse(quiz);
     }
 
-    @PreAuthorize("hasAnyRole('ADMIN')")
+    @PreAuthorize("hasRole('ADMIN')")
     public QuizResponse update(int quizId, QuizUpdateRequest quizUpdateRequest) {
         Quiz quiz = quizRepository.findById(quizId)
                 .orElseThrow(() -> new AppException(ErrorCode.QUIZ_NOT_FOUND));
@@ -77,7 +78,6 @@ public class QuizService {
         }
 
         quiz = Quiz.builder()
-                .id(quizId)
                 .category(serviceCategory)
                 .title(quizUpdateRequest.getTitle())
                 .questions(questions)
@@ -85,14 +85,14 @@ public class QuizService {
         return quizMapper.toQuizResponse(quizRepository.save(quiz));
     }
 
-    @PreAuthorize("hasAnyRole('ADMIN')")
+    @PreAuthorize("hasRole('ADMIN')")
     public void delete(int quizId) {
         Quiz quiz = quizRepository.findById(quizId)
                 .orElseThrow(() -> new AppException(ErrorCode.QUIZ_NOT_FOUND));
         quizRepository.delete(quiz);
     }
 
-    @PreAuthorize("hasAnyRole('ADMIN')")
+    @PreAuthorize("hasRole('ADMIN')")
     public QuizResponse addQuestionsToQuiz(int quizId, AddQuestionsToQuizRequest request) {
         Quiz quiz = quizRepository.findById(quizId)
                 .orElseThrow(() -> new AppException(ErrorCode.QUIZ_NOT_FOUND));
@@ -104,6 +104,21 @@ public class QuizService {
         }
 
         quiz.getQuestions().addAll(questions);
+        return quizMapper.toQuizResponse(quizRepository.save(quiz));
+    }
+
+    @PreAuthorize("hasRole('ADMIN')")
+    public QuizResponse removeQuestionsToQuiz(int quizId, RemoveQuestionsToQuizRequest request) {
+        Quiz quiz = quizRepository.findById(quizId)
+                .orElseThrow(() -> new AppException(ErrorCode.QUIZ_NOT_FOUND));
+
+        Set<Question> questions = new HashSet<>(questionRepository.findAllById(request.getQuestionIds()));
+
+        if (questions.isEmpty()) {
+            throw new AppException(ErrorCode.QUESTION_NOT_FOUND);
+        }
+
+        quiz.getQuestions().removeAll(questions);
         return quizMapper.toQuizResponse(quizRepository.save(quiz));
     }
 }
