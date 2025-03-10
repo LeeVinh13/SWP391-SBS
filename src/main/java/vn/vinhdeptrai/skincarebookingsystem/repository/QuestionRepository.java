@@ -16,4 +16,5 @@ public interface QuestionRepository extends JpaRepository<Question, Integer> {
     @Query("SELECT q FROM Question q JOIN q.quizzes quiz WHERE quiz.id = :quizId")
     Set<Question> findQuestionsByQuizId(@Param("quizId") int quizId);
 
+    boolean existsByQuestion(String question);
 }
