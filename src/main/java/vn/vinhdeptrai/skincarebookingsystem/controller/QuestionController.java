@@ -5,8 +5,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.*;
-import vn.vinhdeptrai.skincarebookingsystem.dto.request.QuestionCreationRequest;
-import vn.vinhdeptrai.skincarebookingsystem.dto.request.QuestionUpdateRequest;
+import vn.vinhdeptrai.skincarebookingsystem.dto.request.*;
 import vn.vinhdeptrai.skincarebookingsystem.dto.response.ApiResponse;
 import vn.vinhdeptrai.skincarebookingsystem.dto.response.QuestionResponse;
 import vn.vinhdeptrai.skincarebookingsystem.dto.response.QuizResponse;
@@ -51,18 +50,24 @@ public class QuestionController {
                 .build();
     }
 
-//    @DeleteMapping("/delete/{quizId}")
-//    void deleteQuiz(@PathVariable int quizId) {
-//        this.quizService.delete(quizId);
-//    }
-//
-//    @PostMapping("/add-questions-to/{quizId}")
-//    public ApiResponse<QuizResponse> addQuestionsToQuiz
-//            (@PathVariable int quizId, @RequestBody AddQuestionsToQuizRequest request) {
-//        return ApiResponse.<QuizResponse>builder()
-//                .result(quizService.addQuestionsToQuiz(quizId, request))
-//                .build();
-//    }
+    @DeleteMapping("/delete/{questionId}")
+    void deleteQuiz(@PathVariable int questionId) {
+        this.questionService.delete(questionId);
+    }
 
+    @PostMapping("/add-answers-to/{questionId}")
+    public ApiResponse<QuestionResponse> addAnswersToQuestion
+            (@PathVariable int questionId, @RequestBody AddAnswersToQuestionRequest request) {
+        return ApiResponse.<QuestionResponse>builder()
+                .result(questionService.addAnswersToQuestion(questionId, request))
+                .build();
+    }
 
+    @DeleteMapping("/remove-answers-from/{questionId}")
+    public ApiResponse<QuestionResponse> removeAnswersFromQuestion
+            (@PathVariable int questionId, @RequestBody RemoveAnswersFromQuestionRequest request) {
+        return ApiResponse.<QuestionResponse>builder()
+                .result(questionService.removeAnswersFromQuestion(questionId, request))
+                .build();
+    }
 }

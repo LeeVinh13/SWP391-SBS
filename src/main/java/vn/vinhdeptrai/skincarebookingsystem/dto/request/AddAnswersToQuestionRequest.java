@@ -11,6 +11,6 @@ import java.util.Set;
 @AllArgsConstructor
 @Builder
 @FieldDefaults(level = AccessLevel.PRIVATE)
-public class RemoveQuestionsToQuizRequest {
-    Set<Integer> questionIds;
+public class AddAnswersToQuestionRequest {
+    Set<Integer> answerIds;
 }

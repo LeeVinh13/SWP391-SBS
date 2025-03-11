@@ -8,7 +8,7 @@ import org.springframework.web.bind.annotation.*;
 import vn.vinhdeptrai.skincarebookingsystem.dto.request.AddQuestionsToQuizRequest;
 import vn.vinhdeptrai.skincarebookingsystem.dto.request.QuizCreationRequest;
 import vn.vinhdeptrai.skincarebookingsystem.dto.request.QuizUpdateRequest;
-import vn.vinhdeptrai.skincarebookingsystem.dto.request.RemoveQuestionsToQuizRequest;
+import vn.vinhdeptrai.skincarebookingsystem.dto.request.RemoveQuestionsFromQuizRequest;
 import vn.vinhdeptrai.skincarebookingsystem.dto.response.ApiResponse;
 import vn.vinhdeptrai.skincarebookingsystem.dto.response.QuizResponse;
 import vn.vinhdeptrai.skincarebookingsystem.service.QuizService;
@@ -67,9 +67,9 @@ public class QuizController {
 
     @DeleteMapping("/remove-questions-from/{quizId}")
     public ApiResponse<QuizResponse> removeQuestionsFromQuiz
-            (@PathVariable int quizId, @RequestBody RemoveQuestionsToQuizRequest request) {
+            (@PathVariable int quizId, @RequestBody RemoveQuestionsFromQuizRequest request) {
         return ApiResponse.<QuizResponse>builder()
-                .result(quizService.removeQuestionsToQuiz(quizId, request))
+                .result(quizService.removeQuestionsFromQuiz(quizId, request))
                 .build();
     }
 }

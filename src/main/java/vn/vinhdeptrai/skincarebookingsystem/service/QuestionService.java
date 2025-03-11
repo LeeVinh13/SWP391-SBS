@@ -58,7 +58,7 @@ public class QuestionService {
         return questionMapper.toQuestionResponse(questionRepository.save(question));
     }
 
-    @PreAuthorize("hasAnyRole('ADMIN')")
+    @PreAuthorize("hasRole('ADMIN')")
     public QuestionResponse update(int questionId, QuestionUpdateRequest questionUpdateRequest) {
         //chỉ update nội dung câu hỏi và các answer vì ở quiz sẽ có API add hoặc remove question
 
@@ -82,26 +82,41 @@ public class QuestionService {
                 .build();
         return questionMapper.toQuestionResponse(questionRepository.save(question));
     }
-//
-//    @PreAuthorize("hasAnyRole('ADMIN')")
-//    public void delete(int quizId) {
-//        Quiz quiz = quizRepository.findById(quizId)
-//                .orElseThrow(() -> new AppException(ErrorCode.QUIZ_NOT_FOUND));
-//        quizRepository.delete(quiz);
-//    }
-//
-//    @PreAuthorize("hasAnyRole('ADMIN')")
-//    public QuizResponse addQuestionsToQuiz(int quizId, AddQuestionsToQuizRequest request) {
-//        Quiz quiz = quizRepository.findById(quizId)
-//                .orElseThrow(() -> new AppException(ErrorCode.QUIZ_NOT_FOUND));
-//
-//        Set<Question> questions = new HashSet<>(questionRepository.findAllById(request.getQuestionIds()));
-//
-//        if (questions.isEmpty()) {
-//            throw new AppException(ErrorCode.QUESTION_NOT_FOUND);
-//        }
-//
-//        quiz.getQuestions().addAll(questions);
-//        return quizMapper.toQuizResponse(quizRepository.save(quiz));
-//    }
+
+    @PreAuthorize("hasRole('ADMIN')")
+    public void delete(int questionId) {
+        Question question = questionRepository.findById(questionId)
+                .orElseThrow(() -> new AppException(ErrorCode.QUESTION_NOT_FOUND));
+        questionRepository.delete(question);
+    }
+
+    @PreAuthorize("hasRole('ADMIN')")
+    public QuestionResponse addAnswersToQuestion(int questionId, AddAnswersToQuestionRequest request) {
+        Question question = questionRepository.findById(questionId)
+                .orElseThrow(() -> new AppException(ErrorCode.QUESTION_NOT_FOUND));
+
+        Set<Answer> answers = new HashSet<>(answerRepository.findAllById(request.getAnswerIds()));
+
+        if (answers.isEmpty()) {
+            throw new AppException(ErrorCode.ANSWER_NOT_FOUND);
+        }
+
+        question.getAnswers().addAll(answers);
+        return questionMapper.toQuestionResponse(questionRepository.save(question));
+    }
+
+    @PreAuthorize("hasRole('ADMIN')")
+    public QuestionResponse removeAnswersFromQuestion(int questionId, RemoveAnswersFromQuestionRequest request) {
+        Question question = questionRepository.findById(questionId)
+                .orElseThrow(() -> new AppException(ErrorCode.QUIZ_NOT_FOUND));
+
+        Set<Answer> answers = new HashSet<>(answerRepository.findAllById(request.getAnswerIds()));
+
+        if (answers.isEmpty()) {
+            throw new AppException(ErrorCode.ANSWER_NOT_FOUND);
+        }
+
+        question.getAnswers().removeAll(answers);
+        return questionMapper.toQuestionResponse(questionRepository.save(question));
+    }
 }

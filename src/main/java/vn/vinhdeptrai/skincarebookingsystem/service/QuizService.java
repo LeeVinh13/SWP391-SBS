@@ -8,7 +8,7 @@ import org.springframework.stereotype.Service;
 import vn.vinhdeptrai.skincarebookingsystem.dto.request.AddQuestionsToQuizRequest;
 import vn.vinhdeptrai.skincarebookingsystem.dto.request.QuizCreationRequest;
 import vn.vinhdeptrai.skincarebookingsystem.dto.request.QuizUpdateRequest;
-import vn.vinhdeptrai.skincarebookingsystem.dto.request.RemoveQuestionsToQuizRequest;
+import vn.vinhdeptrai.skincarebookingsystem.dto.request.RemoveQuestionsFromQuizRequest;
 import vn.vinhdeptrai.skincarebookingsystem.dto.response.QuizResponse;
 import vn.vinhdeptrai.skincarebookingsystem.entity.Question;
 import vn.vinhdeptrai.skincarebookingsystem.entity.Quiz;
@@ -108,7 +108,7 @@ public class QuizService {
     }
 
     @PreAuthorize("hasRole('ADMIN')")
-    public QuizResponse removeQuestionsToQuiz(int quizId, RemoveQuestionsToQuizRequest request) {
+    public QuizResponse removeQuestionsFromQuiz(int quizId, RemoveQuestionsFromQuizRequest request) {
         Quiz quiz = quizRepository.findById(quizId)
                 .orElseThrow(() -> new AppException(ErrorCode.QUIZ_NOT_FOUND));
 
