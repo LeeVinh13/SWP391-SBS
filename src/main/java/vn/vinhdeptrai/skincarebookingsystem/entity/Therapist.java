@@ -21,8 +21,8 @@ public class Therapist extends User{
     String image;
     String specialty;
     String description;
-    @ManyToMany(mappedBy = "therapists")
-    List<Slot> slots;
+    @OneToMany(mappedBy = "therapist", cascade = CascadeType.ALL,fetch = FetchType.EAGER)
+    List<SlotDetail> slotDetails;
 
     @OneToMany(mappedBy = "therapist")
     List<Appointment> appointments;

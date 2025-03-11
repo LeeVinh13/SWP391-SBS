@@ -18,5 +18,4 @@ public class SlotResponse {
     LocalTime time;
     LocalDate date;
     Set<TherapistResponse> therapists;
-//    Set<AppointmentResponse> appointments;
 }

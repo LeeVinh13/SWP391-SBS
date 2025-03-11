@@ -47,7 +47,11 @@ public class AppointmentService {
         return appointmentMapper.toAppointmentResponse(appointment);
     }
     public List<AppointmentResponse> getAllAppointments() {
-        return appointmentRepository.findAll().stream().map(
+        List<Appointment> appointments = appointmentRepository.findAll();
+        if(appointments.isEmpty()) {
+            throw new AppException(ErrorCode.APPOINTMENT_NOT_FOUND);
+        }
+        return appointments.stream().map(
                 appointment -> appointmentMapper.toAppointmentResponse(appointment)
         ).collect(Collectors.toList());
     }

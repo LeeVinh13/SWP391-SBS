@@ -24,7 +24,8 @@ public class SlotDetail {
     @ManyToOne
     @JoinColumn(name="therapistId")
     Therapist therapist;
-    @OneToOne(mappedBy = "slotDetail", cascade = CascadeType.REMOVE)
+
+    @OneToOne(mappedBy = "slotDetail")
     Appointment appointment;
 
     @Enumerated(EnumType.STRING)
