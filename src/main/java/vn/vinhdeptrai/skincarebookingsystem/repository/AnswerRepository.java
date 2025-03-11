@@ -9,6 +9,4 @@ import java.util.Set;
 
 @Repository
 public interface AnswerRepository extends JpaRepository<Answer, Integer> {
-    Set<Answer> findByQuestion(Question question);
-    Set<Answer> findByQuestion_Id(int id);
 }

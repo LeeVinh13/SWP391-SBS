@@ -6,7 +6,6 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 import vn.vinhdeptrai.skincarebookingsystem.entity.Question;
-import vn.vinhdeptrai.skincarebookingsystem.entity.Quiz;
 
 import java.util.Set;
 

@@ -7,17 +7,11 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Service;
 import vn.vinhdeptrai.skincarebookingsystem.dto.request.AnswerRequest;
 import vn.vinhdeptrai.skincarebookingsystem.dto.response.AnswerResponse;
-import vn.vinhdeptrai.skincarebookingsystem.dto.response.QuestionResponse;
 import vn.vinhdeptrai.skincarebookingsystem.entity.Answer;
-import vn.vinhdeptrai.skincarebookingsystem.entity.Question;
 import vn.vinhdeptrai.skincarebookingsystem.exception.AppException;
 import vn.vinhdeptrai.skincarebookingsystem.exception.ErrorCode;
 import vn.vinhdeptrai.skincarebookingsystem.mapper.AnswerMapper;
-import vn.vinhdeptrai.skincarebookingsystem.mapper.QuestionMapper;
 import vn.vinhdeptrai.skincarebookingsystem.repository.AnswerRepository;
-import vn.vinhdeptrai.skincarebookingsystem.repository.QuestionRepository;
-import vn.vinhdeptrai.skincarebookingsystem.repository.QuizRepository;
-import vn.vinhdeptrai.skincarebookingsystem.repository.ServiceCategoryRepository;
 
 import java.util.List;
 import java.util.stream.Collectors;
@@ -26,10 +20,6 @@ import java.util.stream.Collectors;
 @RequiredArgsConstructor
 @FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)
 public class AnswerService {
-    QuizRepository quizRepository;
-    QuestionRepository questionRepository;
-    QuestionMapper questionMapper;
-    ServiceCategoryRepository serviceCategoryRepository;
     private final AnswerRepository answerRepository;
     AnswerMapper answerMapper;
 
