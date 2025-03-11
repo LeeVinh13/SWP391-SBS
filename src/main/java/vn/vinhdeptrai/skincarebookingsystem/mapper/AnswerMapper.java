@@ -8,5 +8,5 @@ import vn.vinhdeptrai.skincarebookingsystem.entity.Answer;
 @Mapper(componentModel = "spring")
 public interface AnswerMapper {
     Answer toAnswer(AnswerRequest answerRequest);
-    AnswerResponse toQuizResponse(Answer answer);
+    AnswerResponse toAnswerResponse(Answer answer);
 }

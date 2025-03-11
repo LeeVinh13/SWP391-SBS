@@ -7,19 +7,13 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Service;
 import vn.vinhdeptrai.skincarebookingsystem.dto.request.*;
 import vn.vinhdeptrai.skincarebookingsystem.dto.response.QuestionResponse;
-import vn.vinhdeptrai.skincarebookingsystem.dto.response.QuizResponse;
 import vn.vinhdeptrai.skincarebookingsystem.entity.Answer;
 import vn.vinhdeptrai.skincarebookingsystem.entity.Question;
-import vn.vinhdeptrai.skincarebookingsystem.entity.Quiz;
-import vn.vinhdeptrai.skincarebookingsystem.entity.ServiceCategory;
 import vn.vinhdeptrai.skincarebookingsystem.exception.AppException;
 import vn.vinhdeptrai.skincarebookingsystem.exception.ErrorCode;
 import vn.vinhdeptrai.skincarebookingsystem.mapper.QuestionMapper;
-import vn.vinhdeptrai.skincarebookingsystem.mapper.QuizMapper;
 import vn.vinhdeptrai.skincarebookingsystem.repository.AnswerRepository;
 import vn.vinhdeptrai.skincarebookingsystem.repository.QuestionRepository;
-import vn.vinhdeptrai.skincarebookingsystem.repository.QuizRepository;
-import vn.vinhdeptrai.skincarebookingsystem.repository.ServiceCategoryRepository;
 
 import java.util.HashSet;
 import java.util.List;
@@ -30,11 +24,9 @@ import java.util.stream.Collectors;
 @RequiredArgsConstructor
 @FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)
 public class QuestionService {
-    QuizRepository quizRepository;
     QuestionRepository questionRepository;
     QuestionMapper questionMapper;
-    ServiceCategoryRepository serviceCategoryRepository;
-    private final AnswerRepository answerRepository;
+    AnswerRepository answerRepository;
 
     public List<QuestionResponse> getQuestionList() {
         List<Question> questionList = questionRepository.findAll();

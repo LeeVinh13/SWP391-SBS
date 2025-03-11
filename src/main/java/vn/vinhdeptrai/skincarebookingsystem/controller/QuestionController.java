@@ -8,7 +8,6 @@ import org.springframework.web.bind.annotation.*;
 import vn.vinhdeptrai.skincarebookingsystem.dto.request.*;
 import vn.vinhdeptrai.skincarebookingsystem.dto.response.ApiResponse;
 import vn.vinhdeptrai.skincarebookingsystem.dto.response.QuestionResponse;
-import vn.vinhdeptrai.skincarebookingsystem.dto.response.QuizResponse;
 import vn.vinhdeptrai.skincarebookingsystem.service.QuestionService;
 
 import java.util.List;
@@ -51,7 +50,7 @@ public class QuestionController {
     }
 
     @DeleteMapping("/delete/{questionId}")
-    void deleteQuiz(@PathVariable int questionId) {
+    void deleteQuestion(@PathVariable int questionId) {
         this.questionService.delete(questionId);
     }
 
