@@ -15,12 +15,18 @@ public enum ErrorCode {
     UNAUTHENTICATED(1005,"UNAUTHENTICATED!", HttpStatus.UNAUTHORIZED),
     UNAUTHORIZED(1006, "You do not have permission", HttpStatus.FORBIDDEN),
 
-    SLOT_NOT_FOUND(1012, "Slot not found", HttpStatus.NOT_FOUND),
+    SLOT_NOT_AVAILABLE(1012, "Slot is not available", HttpStatus.CONFLICT),
+    APPOINTMENT_CANCELLED(1013, "Appointment cancelled", HttpStatus.CONFLICT),
+    SLOT_NOT_FOUND(1013, "Slot not found", HttpStatus.NOT_FOUND),
     USER_NOT_FOUND(1007,"USER NOT FOUND!", HttpStatus.NOT_FOUND),
     ROLE_NOT_FOUND(1008,"ROLE NOT FOUND!", HttpStatus.NOT_FOUND),
     THERAPIST_NOT_FOUND(1011,"THERAPIS NOT FOUND!", HttpStatus.NOT_FOUND),
     SERVICE_NOT_FOUND(1009,"SERVICE NOT FOUND!", HttpStatus.NOT_FOUND),
     SERVICE_CATE_NOT_FOUND(1010,"SERVICE CATEGORY NOT FOUND!", HttpStatus.NOT_FOUND),
+    APPOINTMENT_NOT_FOUND(1014,"APPOINTMENT NOT FOUND!", HttpStatus.NOT_FOUND),
+
+
+
     ;
     public int code;
     public String message;

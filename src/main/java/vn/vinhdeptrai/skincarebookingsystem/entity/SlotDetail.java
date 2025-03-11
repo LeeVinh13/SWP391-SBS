@@ -25,6 +25,9 @@ public class SlotDetail {
     @JoinColumn(name="therapistId")
     Therapist therapist;
 
+    @OneToOne(mappedBy = "slotDetail", cascade = CascadeType.REMOVE)
+    Appointment appointment;
+
     @Enumerated(EnumType.STRING)
     SlotStatus status;
 }

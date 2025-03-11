@@ -13,7 +13,7 @@ import java.util.Set;
 @NoArgsConstructor
 @AllArgsConstructor
 @FieldDefaults(level = AccessLevel.PRIVATE)
-@Table(name ="categoryservice")
+@Table(name ="serviceCategory")
 public class ServiceCategory{
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

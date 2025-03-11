@@ -26,7 +26,5 @@ public class Slot {
     @OneToMany(mappedBy = "slot", cascade = CascadeType.ALL)
     Set<SlotDetail> slotDetails;
 
-//    @OneToMany(mappedBy = "slot")
-//    List<Appointment> appointments;
 }
 
