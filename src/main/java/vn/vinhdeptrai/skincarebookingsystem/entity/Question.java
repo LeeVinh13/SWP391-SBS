@@ -1,10 +1,10 @@
 package vn.vinhdeptrai.skincarebookingsystem.entity;
 
+
 import jakarta.persistence.*;
 import lombok.*;
 import lombok.experimental.FieldDefaults;
 
-import java.util.List;
 import java.util.Set;
 
 @Getter
@@ -14,19 +14,17 @@ import java.util.Set;
 @NoArgsConstructor
 @AllArgsConstructor
 @FieldDefaults(level = AccessLevel.PRIVATE)
-@Table(name ="service")
-public class Service {
+@Table(name = "question")
+public class Question {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     int id;
-    String name;
-    String description;
-    double price;
-    String duration;
-    String thumbnail; // lưu URL ảnh từ cloudinary
-    @ManyToOne
-    @JoinColumn(name ="categoryId")
-    ServiceCategory category;
-    @OneToMany(mappedBy = "service")
-    List<Appointment> appointments;
+
+    String question;
+
+    @OneToMany(mappedBy = "question", cascade = CascadeType.ALL, orphanRemoval = true)
+    Set<Answer> answers; //xóa question là xóa luôn câu trả lời
+
+    @ManyToMany(mappedBy = "questions")
+    Set<Quiz> quizzes;
 }
