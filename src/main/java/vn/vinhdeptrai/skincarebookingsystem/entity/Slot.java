@@ -8,6 +8,7 @@ import org.springframework.cglib.core.Local;
 import java.time.LocalDate;
 import java.time.LocalTime;
 import java.util.List;
+import java.util.Set;
 
 @Getter
 @Setter
@@ -23,12 +24,7 @@ public class Slot {
     int id;
     LocalDate date;
     LocalTime time;
-    @ManyToMany
-    @JoinTable(
-        name = "slot_therapist",
-        joinColumns = @JoinColumn(name = "slot_id"),
-        inverseJoinColumns = @JoinColumn(name = "therapist_id")
-    )
-    List<Therapist> therapists;
+    @OneToMany(mappedBy = "slot", cascade = CascadeType.ALL)
+    Set<SlotDetail> slotDetails;
 
 }

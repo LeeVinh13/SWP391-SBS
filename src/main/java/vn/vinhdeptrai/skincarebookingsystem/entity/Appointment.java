@@ -43,4 +43,7 @@ public class Appointment {
     @ManyToOne
     @JoinColumn(name = "serviceId")
     Service service;
+
+    @Enumerated(EnumType.STRING)
+    AppointmentStatus status;
 }
