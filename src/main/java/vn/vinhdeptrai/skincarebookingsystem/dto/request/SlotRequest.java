@@ -14,6 +14,8 @@ import java.util.Set;
 @Builder
 @FieldDefaults(level = AccessLevel.PRIVATE)
 public class SlotRequest {
-    LocalDate date;
+    LocalDate startDate;
+    LocalDate endDate;
     Set<Integer> therapists;
+
 }

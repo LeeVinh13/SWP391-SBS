@@ -39,6 +39,8 @@ public class SlotController {
                 .result(slotService.getSlotsById(id))
                 .build();
     }
+
+
     @GetMapping("/available/date/{date}")
     public ApiResponse<List<SlotResponse>> getAvailableSlotsByDate(@PathVariable("date") LocalDate date) {
         return ApiResponse.<List<SlotResponse>>builder()
@@ -58,7 +60,7 @@ public class SlotController {
 //                .build();
 //    }
     @PostMapping("/generate/day")
-    public ApiResponse<List<SlotResponse>> generateSlotForDateRange(@RequestBody SlotRequest slotRequest) {
+    public ApiResponse<List<SlotResponse>> generateSlotForDay(@RequestBody SlotRequest slotRequest) {
         return ApiResponse.<List<SlotResponse>>builder()
                 .result(slotService.generateSlotsForDay(slotRequest))
                 .build();

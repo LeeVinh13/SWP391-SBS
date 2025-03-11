@@ -35,10 +35,12 @@ public class Appointment {
     @JoinColumn(name = "slotDetailId")
     SlotDetail slotDetail;
 
+
+    @ManyToOne
+    @JoinColumn(name ="therapistId")
+    Therapist therapist;
+
     @ManyToOne
     @JoinColumn(name = "serviceId")
     Service service;
-
-    @Enumerated(EnumType.STRING)
-    AppointmentStatus status;
 }

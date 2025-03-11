@@ -36,7 +36,7 @@ public class ApplicationInitConfig {
                 User admin = User.builder()
                         .username("admin")
 //                        .password(passwordEncoder.encode("admin"))
-                        .password("admin")
+                        .password("password")
                         .role(Set.of(adminRole))
                         .build();
                 users.add(admin);
@@ -45,7 +45,7 @@ public class ApplicationInitConfig {
                 User staff = User.builder()
                         .username("staff")
 //                        .password(passwordEncoder.encode("staff"))
-                        .password("staff")
+                        .password("password")
                         .role(Set.of(staffRole))
                         .build();
                 users.add(staff);
@@ -54,7 +54,7 @@ public class ApplicationInitConfig {
                 User therapist = User.builder()
                         .username("therapist")
 //                        .password(passwordEncoder.encode("therapist"))
-                        .password("therapist")
+                        .password("password")
                         .role(Set.of(therapistRole))
                         .build();
                 users.add(therapist);
@@ -63,7 +63,7 @@ public class ApplicationInitConfig {
                 User user = User.builder()
                         .username("user")
 //                        .password(passwordEncoder.encode("user"))
-                        .password("user")
+                        .password("password")
                         .role(Set.of(userRole))
                         .build();
                 users.add(user);

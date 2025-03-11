@@ -3,12 +3,12 @@ package vn.vinhdeptrai.skincarebookingsystem.entity;
 import jakarta.persistence.*;
 import lombok.*;
 import lombok.experimental.FieldDefaults;
+import org.springframework.cglib.core.Local;
 
 import java.time.LocalDate;
 import java.time.LocalTime;
-import java.util.Set;
+import java.util.List;
 
-@Data
 @Getter
 @Setter
 @Entity
@@ -23,8 +23,12 @@ public class Slot {
     int id;
     LocalDate date;
     LocalTime time;
-    @OneToMany(mappedBy = "slot", cascade = CascadeType.ALL)
-    Set<SlotDetail> slotDetails;
+    @ManyToMany
+    @JoinTable(
+        name = "slot_therapist",
+        joinColumns = @JoinColumn(name = "slot_id"),
+        inverseJoinColumns = @JoinColumn(name = "therapist_id")
+    )
+    List<Therapist> therapists;
 
 }
-
