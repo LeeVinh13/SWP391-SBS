@@ -7,6 +7,7 @@ import lombok.experimental.SuperBuilder;
 import vn.vinhdeptrai.skincarebookingsystem.enums.AppointmentStatus;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.Date;
 import java.util.List;
 
@@ -22,17 +23,18 @@ public class Appointment {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     int id;
-    LocalDate createAt = LocalDate.now();
+    LocalDateTime createAt;
+    LocalDateTime updateAt;
     String note;
-    @Enumerated(EnumType.STRING)
-    AppointmentStatus status;
+
     @ManyToOne
     @JoinColumn(name ="userId")
     User user;
 
-//    @ManyToOne
-//    @JoinColumn(name = "slotId")
-//    Slot slot;
+    @OneToOne
+    @JoinColumn(name = "slotDetailId")
+    SlotDetail slotDetail;
+
 
     @ManyToOne
     @JoinColumn(name ="therapistId")

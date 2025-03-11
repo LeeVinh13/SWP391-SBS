@@ -13,9 +13,10 @@ import java.util.Set;
 @Builder
 @FieldDefaults(level = AccessLevel.PRIVATE)
 public class ServiceResponse {
+    int id;
     String name;
     String description;
-    long price;
+    double price;
     String duration;
     String thumbnail;
 

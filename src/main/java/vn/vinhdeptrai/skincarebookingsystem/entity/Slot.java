@@ -31,6 +31,4 @@ public class Slot {
     )
     List<Therapist> therapists;
 
-//    @OneToMany(mappedBy = "slot")
-//    List<Appointment> appointments;
 }
