@@ -8,6 +8,7 @@ import vn.vinhdeptrai.skincarebookingsystem.entity.Appointment;
 
 @Mapper(componentModel = "spring")
 public interface AppointmentMapper {
+
     Appointment toAppointment(AppointmentRequest appointmentRequest);
     @Mapping(target ="email", source = "user.email")
     @Mapping(target ="fullname",source = "user.fullname")

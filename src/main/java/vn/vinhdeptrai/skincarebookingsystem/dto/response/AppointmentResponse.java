@@ -1,10 +1,10 @@
 package vn.vinhdeptrai.skincarebookingsystem.dto.response;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
-import jdk.jshell.Snippet;
 import lombok.*;
 import lombok.experimental.FieldDefaults;
 import vn.vinhdeptrai.skincarebookingsystem.enums.AppointmentStatus;
+import vn.vinhdeptrai.skincarebookingsystem.enums.PaymentStatus;
 
 import java.time.LocalDate;
 import java.time.LocalTime;
@@ -18,9 +18,12 @@ import java.time.LocalTime;
 public class AppointmentResponse {
     int id;
     String fullname, email,note;
+    double price;
+    double depositAmount;
     LocalDate date;
     LocalTime time;
     ServiceResponse service;
     TherapistResponse therapist;
-    AppointmentStatus status;
+    AppointmentStatus appointmentStatus;
+    PaymentStatus paymentStatus;
 }

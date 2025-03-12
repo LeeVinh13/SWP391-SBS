@@ -24,9 +24,6 @@ public class Therapist extends User{
     @OneToMany(mappedBy = "therapist", cascade = CascadeType.ALL,fetch = FetchType.EAGER)
     List<SlotDetail> slotDetails;
 
-    @OneToMany(mappedBy = "therapist")
-    List<Appointment> appointments;
-
     @ManyToMany
     @JoinTable(
             name = "therapist_servicecategory",

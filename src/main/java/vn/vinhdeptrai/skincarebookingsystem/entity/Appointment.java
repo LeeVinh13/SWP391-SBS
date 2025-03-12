@@ -3,13 +3,10 @@ package vn.vinhdeptrai.skincarebookingsystem.entity;
 import jakarta.persistence.*;
 import lombok.*;
 import lombok.experimental.FieldDefaults;
-import lombok.experimental.SuperBuilder;
 import vn.vinhdeptrai.skincarebookingsystem.enums.AppointmentStatus;
+import vn.vinhdeptrai.skincarebookingsystem.enums.PaymentStatus;
 
-import java.time.LocalDate;
 import java.time.LocalDateTime;
-import java.util.Date;
-import java.util.List;
 
 @Entity
 @Getter
@@ -26,7 +23,8 @@ public class Appointment {
     LocalDateTime createAt;
     LocalDateTime updateAt;
     String note;
-
+    double price;
+    double depositAmount;
     @ManyToOne
     @JoinColumn(name ="userId")
     User user;
@@ -35,15 +33,15 @@ public class Appointment {
     @JoinColumn(name = "slotDetailId")
     SlotDetail slotDetail;
 
-
-    @ManyToOne
-    @JoinColumn(name ="therapistId")
-    Therapist therapist;
-
     @ManyToOne
     @JoinColumn(name = "serviceId")
     Service service;
 
     @Enumerated(EnumType.STRING)
-    AppointmentStatus status;
+    AppointmentStatus appointmentStatus;
+
+    @Enumerated(EnumType.STRING)
+    PaymentStatus paymentStatus;
+
+
 }
