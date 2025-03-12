@@ -7,7 +7,6 @@ import org.springframework.web.bind.annotation.*;
 import vn.vinhdeptrai.skincarebookingsystem.dto.request.AppointmentRequest;
 import vn.vinhdeptrai.skincarebookingsystem.dto.response.ApiResponse;
 import vn.vinhdeptrai.skincarebookingsystem.dto.response.AppointmentResponse;
-import vn.vinhdeptrai.skincarebookingsystem.entity.Appointment;
 import vn.vinhdeptrai.skincarebookingsystem.service.AppointmentService;
 
 import java.util.List;

@@ -1,32 +1,23 @@
 package vn.vinhdeptrai.skincarebookingsystem.service;
 
-import jakarta.transaction.Transactional;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
-import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
-import vn.vinhdeptrai.skincarebookingsystem.constant.PredefinedRole;
 import vn.vinhdeptrai.skincarebookingsystem.dto.request.AppointmentRequest;
-import vn.vinhdeptrai.skincarebookingsystem.dto.request.UserCreationRequest;
-import vn.vinhdeptrai.skincarebookingsystem.dto.request.UserUpdateRequest;
 import vn.vinhdeptrai.skincarebookingsystem.dto.response.AppointmentResponse;
-import vn.vinhdeptrai.skincarebookingsystem.dto.response.UserResponse;
 import vn.vinhdeptrai.skincarebookingsystem.entity.*;
 import vn.vinhdeptrai.skincarebookingsystem.enums.AppointmentStatus;
+import vn.vinhdeptrai.skincarebookingsystem.enums.PaymentStatus;
 import vn.vinhdeptrai.skincarebookingsystem.enums.SlotStatus;
 import vn.vinhdeptrai.skincarebookingsystem.exception.AppException;
 import vn.vinhdeptrai.skincarebookingsystem.exception.ErrorCode;
 import vn.vinhdeptrai.skincarebookingsystem.mapper.AppointmentMapper;
-import vn.vinhdeptrai.skincarebookingsystem.mapper.UserMapper;
 import vn.vinhdeptrai.skincarebookingsystem.repository.*;
 
-import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
-import java.util.Set;
 import java.util.stream.Collectors;
 
 @Service
@@ -66,11 +57,10 @@ public class AppointmentService {
         Appointment appointment = appointmentMapper.toAppointment(appointmentRequest);
         appointment.setUser(user);
         appointment.setCreateAt(LocalDateTime.now());
-        appointment.setStatus(AppointmentStatus.PENDING);
         appointment.setService(service);
         appointment.setSlotDetail(slotDetail);
-
-
+        appointment.setPrice(service.getPrice());
+        appointment.setDepositAmount(service.getPrice()*0.3 );
         return appointmentMapper.toAppointmentResponse(appointmentRepository.save(appointment));
     }
     public AppointmentResponse update(AppointmentRequest appointmentRequest, int appointmentId) {
@@ -80,14 +70,12 @@ public class AppointmentService {
 
             vn.vinhdeptrai.skincarebookingsystem.entity.Service newService = getService(appointmentRequest.getServiceId());
             SlotDetail newSlotDetail = getAvailableSlotDetail(appointmentRequest.getSlotId(), appointmentRequest.getTherapistId());
-
             updateSlotDetailStatus(appointment.getSlotDetail(), SlotStatus.AVAILABLE);
 
             appointment.setNote(appointmentRequest.getNote());
             appointment.setUpdateAt(LocalDateTime.now());
             appointment.setService(newService);
             appointment.setSlotDetail(newSlotDetail);
-
             return appointmentMapper.toAppointmentResponse(appointmentRepository.save(appointment));
         }
     public void cancelAppointment(int appointmentId) {
@@ -97,7 +85,8 @@ public class AppointmentService {
         if(appointment.getSlotDetail().getStatus() == SlotStatus.AVAILABLE) {
             throw new AppException(ErrorCode.APPOINTMENT_CANCELLED);
         }
-        appointment.setStatus(AppointmentStatus.REJECTED);
+        appointment.setAppointmentStatus(AppointmentStatus.REJECTED);
+        appointment.setPaymentStatus(PaymentStatus.CANCELLED);
         updateSlotDetailStatus(appointment.getSlotDetail(), SlotStatus.AVAILABLE);
         appointmentRepository.save(appointment);
     }
