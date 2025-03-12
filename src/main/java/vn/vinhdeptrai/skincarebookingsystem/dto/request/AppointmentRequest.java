@@ -1,10 +1,10 @@
 package vn.vinhdeptrai.skincarebookingsystem.dto.request;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.*;
 import lombok.experimental.FieldDefaults;
-
-import java.time.LocalDate;
-import java.util.Set;
+import vn.vinhdeptrai.skincarebookingsystem.enums.AppointmentStatus;
+import vn.vinhdeptrai.skincarebookingsystem.enums.PaymentStatus;
 
 @Getter
 @Setter
@@ -15,4 +15,9 @@ import java.util.Set;
 public class AppointmentRequest {
     String note;
     int serviceId, therapistId, slotId;
+    @JsonIgnore
+    PaymentStatus paymentStatus = PaymentStatus.PENDING;
+    @JsonIgnore
+    AppointmentStatus appointmentStatus =AppointmentStatus.PENDING;
+
 }
