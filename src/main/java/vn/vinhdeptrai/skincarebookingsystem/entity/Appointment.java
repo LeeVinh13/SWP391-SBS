@@ -3,10 +3,14 @@ package vn.vinhdeptrai.skincarebookingsystem.entity;
 import jakarta.persistence.*;
 import lombok.*;
 import lombok.experimental.FieldDefaults;
+import lombok.experimental.SuperBuilder;
 import vn.vinhdeptrai.skincarebookingsystem.enums.AppointmentStatus;
 import vn.vinhdeptrai.skincarebookingsystem.enums.PaymentStatus;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.util.Date;
+import java.util.List;
 
 @Entity
 @Getter
