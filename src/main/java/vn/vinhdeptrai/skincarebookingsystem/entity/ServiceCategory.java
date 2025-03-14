@@ -1,5 +1,6 @@
 package vn.vinhdeptrai.skincarebookingsystem.entity;
 
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
 import lombok.*;
 import lombok.experimental.FieldDefaults;
@@ -21,7 +22,7 @@ public class ServiceCategory{
     String name;
     String description;
     boolean signature;
-    @OneToMany(mappedBy = "category")
+    @OneToMany(mappedBy = "category", cascade = CascadeType.ALL)
     Set<Service> services;
     @ManyToMany(mappedBy = "categories")
     Set<Therapist> therapists;

@@ -22,15 +22,18 @@ public class ServiceCategoryService {
     ServiceCategoryMapper serviceCategoryMapper;
     ServiceCategoryRepository serviceCategoryRepository;
     public List<ServiceCategoryResponse> getAll() {
-//        List<CategoryServiceResponse> categoryServiceResponseList = new ArrayList<>();
-//        for(vn.vinhdeptrai.skincarebookingsystem.entity.CategoryService category : categoryServiceRepository.findAll()) {
-//            categoryServiceResponseList.add(categoryServiceMapper.toServiceCategoryResponse()(category));
-//        }
-        return serviceCategoryRepository.findAll().stream().map(serviceCategory ->
+        List<ServiceCategory> serviceCategories = serviceCategoryRepository.findAll();
+        if(serviceCategories.isEmpty()) {
+            throw new AppException(ErrorCode.SERVICE_CATE_NOT_FOUND);
+        }
+        return serviceCategories.stream().map(serviceCategory ->
                 serviceCategoryMapper.toServiceCategoryResponse(serviceCategory)).collect(Collectors.toList());
     }
     public ServiceCategoryResponse getById(int id) {
-        return serviceCategoryMapper.toServiceCategoryResponse(serviceCategoryRepository.getOne(id));
+        ServiceCategory serviceCategory = serviceCategoryRepository.findById(id).orElseThrow(
+                () -> new AppException(ErrorCode.SERVICE_CATE_NOT_FOUND)
+        );
+        return serviceCategoryMapper.toServiceCategoryResponse(serviceCategory);
     }
     public ServiceCategoryResponse create(ServiceCategoryRequest serviceCategoryRequest) {
         return serviceCategoryMapper.toServiceCategoryResponse(
@@ -44,6 +47,9 @@ public class ServiceCategoryService {
         return serviceCategoryMapper.toServiceCategoryResponse(serviceCategoryRepository.save(serviceCategory));
     }
     public void delete(int id) {
+        ServiceCategory serviceCategory = serviceCategoryRepository.findById(id).orElseThrow(
+                () -> new AppException(ErrorCode.SERVICE_CATE_NOT_FOUND)
+        );
         serviceCategoryRepository.deleteById(id);
     }
 }

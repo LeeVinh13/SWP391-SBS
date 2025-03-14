@@ -49,8 +49,10 @@ public class ServiceController {
     }
 
     @DeleteMapping("/delete/{id}")
-    void deleteUser(@PathVariable int id) {
+    ApiResponse<ServiceResponse> deleteUser(@PathVariable int id) {
         this.service.delete(id);
+        return ApiResponse.<ServiceResponse>builder()
+                .build();
     }
 }
 
