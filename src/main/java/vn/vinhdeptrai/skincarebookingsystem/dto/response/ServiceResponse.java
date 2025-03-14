@@ -19,5 +19,5 @@ public class ServiceResponse {
     double price;
     String duration;
     String thumbnail;
-
+    ServiceCategoryResponse category;
 }

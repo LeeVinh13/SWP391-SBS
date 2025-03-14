@@ -16,5 +16,4 @@ public class ServiceCategoryResponse {
     String name;
     String description;
     boolean signature;
-    Set<ServiceResponse> services;
  }
