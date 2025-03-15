@@ -12,6 +12,7 @@ import vn.vinhdeptrai.skincarebookingsystem.dto.request.TherapistRequest;
 import vn.vinhdeptrai.skincarebookingsystem.dto.response.ApiResponse;
 import vn.vinhdeptrai.skincarebookingsystem.dto.response.SlotResponse;
 import vn.vinhdeptrai.skincarebookingsystem.dto.response.TherapistResponse;
+import vn.vinhdeptrai.skincarebookingsystem.entity.Therapist;
 import vn.vinhdeptrai.skincarebookingsystem.service.SlotService;
 import vn.vinhdeptrai.skincarebookingsystem.service.TherapistService;
 
@@ -19,6 +20,7 @@ import java.io.IOException;
 import java.time.LocalDate;
 import java.time.LocalTime;
 import java.util.List;
+import java.util.Set;
 
 @RestController
 @RequestMapping("/api/slots")
@@ -39,8 +41,13 @@ public class SlotController {
                 .result(slotService.getSlotsById(id))
                 .build();
     }
-
-
+    @GetMapping("/date-and-therapist")
+    public ApiResponse<List<SlotResponse>> getSlotsByDateAndTherapist(@RequestParam("date") LocalDate date,
+                                                                      @RequestParam("therapistId") int therapistId) {
+        return ApiResponse.<List<SlotResponse>>builder()
+                .result(slotService.getSlotsByDayAndTherapist(date,therapistId))
+                .build();
+    }
     @GetMapping("/available/date/{date}")
     public ApiResponse<List<SlotResponse>> getAvailableSlotsByDate(@PathVariable("date") LocalDate date) {
         return ApiResponse.<List<SlotResponse>>builder()
@@ -53,12 +60,13 @@ public class SlotController {
                 .result(slotService.getAvailableSlotsByTherapist(therapistId))
                 .build();
     }
-//    @PostMapping("/generate/date-range")
-//    public ApiResponse<List<SlotResponse>> generateSlotForDateRange(@RequestBody SlotRequest slotRequest) {
-//        return ApiResponse.<List<SlotResponse>>builder()
-//                .result(slotService.generateSlotsForDateRange(slotRequest))
-//                .build();
-//    }
+    @PostMapping("/generate/date-range")
+    public ApiResponse<List<SlotResponse>> generateSlotForDateRange(@RequestParam("startDate") LocalDate startDate
+            , @RequestParam("endDate") LocalDate endDate,@RequestParam("therapistIds") Set<Integer> therapistIds) {
+        return ApiResponse.<List<SlotResponse>>builder()
+                .result(slotService.generateSlotsForDateRange(startDate, endDate, therapistIds))
+                .build();
+    }
     @PostMapping("/generate/day")
     public ApiResponse<List<SlotResponse>> generateSlotForDay(@RequestBody SlotRequest slotRequest) {
         return ApiResponse.<List<SlotResponse>>builder()
@@ -67,7 +75,7 @@ public class SlotController {
     }
     @DeleteMapping("/delete/{id}")
     public ApiResponse<Void> delete(@PathVariable int id) {
-        slotService.deleteSlot(id);
+        slotService.delete(id);
         return ApiResponse.<Void>builder()
                 .build();
     }

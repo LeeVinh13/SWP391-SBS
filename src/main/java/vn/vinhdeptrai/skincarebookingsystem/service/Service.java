@@ -31,6 +31,10 @@ public class Service {
     CloudinaryUtil cloudinaryUtil;
     ServiceCategoryRepository serviceCategoryRepository;
     public List<ServiceResponse> getAll() {
+        List<vn.vinhdeptrai.skincarebookingsystem.entity.Service> services = serviceRepository.findAll();
+        if (services.isEmpty()) {
+            throw new AppException(ErrorCode.SERVICE_NOT_FOUND);
+        }
         return serviceRepository.findAll().stream().map(service -> serviceMapper.toServiceResponse(service)).toList();
     }
     public ServiceResponse getById(int id) {
@@ -42,8 +46,10 @@ public class Service {
     public ServiceResponse create(ServiceRequest serviceRequest, MultipartFile file) throws IOException {
         ServiceCategory serviceCategory = serviceCategoryRepository.findById(serviceRequest.getCategoryId()).orElseThrow(
                 () -> new AppException(ErrorCode.SERVICE_CATE_NOT_FOUND));
+
         vn.vinhdeptrai.skincarebookingsystem.entity.Service service = serviceMapper.toService(serviceRequest);
         service.setThumbnail(cloudinaryUtil.uploadImage(file));
+        service.setCategory(serviceCategory);
         return serviceMapper.toServiceResponse(serviceRepository.save(service));
     }
     public ServiceResponse update(ServiceRequest serviceRequest, int id, MultipartFile file) throws IOException {
@@ -53,10 +59,16 @@ public class Service {
         ServiceCategory serviceCategory = serviceCategoryRepository.findById(serviceRequest.getCategoryId()).orElseThrow(
                 () -> new AppException(ErrorCode.SERVICE_CATE_NOT_FOUND));
         serviceMapper.updateService(service, serviceRequest);
-        service.setThumbnail(cloudinaryUtil.uploadImage(file));
+        if(file != null && !file.isEmpty()) {
+            service.setThumbnail(cloudinaryUtil.uploadImage(file));
+        }
+        service.setCategory(serviceCategory);
         return serviceMapper.toServiceResponse(serviceRepository.save(service));
     }
     public void delete(int id) {
+        vn.vinhdeptrai.skincarebookingsystem.entity.Service service = serviceRepository.findById(id).orElseThrow(
+                () -> new AppException(ErrorCode.SERVICE_NOT_FOUND)
+        );
         serviceRepository.deleteById(id);
     }
 }

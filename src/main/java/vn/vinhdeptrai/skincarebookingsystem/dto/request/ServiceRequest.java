@@ -13,7 +13,7 @@ import org.springframework.web.multipart.MultipartFile;
 public class ServiceRequest {
     String name;
     String description;
-    long price;
+    double price;
     String duration;
     MultipartFile thumbnail;
     int categoryId;
