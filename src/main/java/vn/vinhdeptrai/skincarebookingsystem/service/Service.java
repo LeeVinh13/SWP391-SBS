@@ -59,8 +59,10 @@ public class Service {
         ServiceCategory serviceCategory = serviceCategoryRepository.findById(serviceRequest.getCategoryId()).orElseThrow(
                 () -> new AppException(ErrorCode.SERVICE_CATE_NOT_FOUND));
         serviceMapper.updateService(service, serviceRequest);
+        if(file != null && !file.isEmpty()) {
+            service.setThumbnail(cloudinaryUtil.uploadImage(file));
+        }
         service.setCategory(serviceCategory);
-        service.setThumbnail(cloudinaryUtil.uploadImage(file));
         return serviceMapper.toServiceResponse(serviceRepository.save(service));
     }
     public void delete(int id) {
