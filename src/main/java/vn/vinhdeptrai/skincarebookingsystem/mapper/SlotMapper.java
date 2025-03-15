@@ -17,7 +17,7 @@ public interface SlotMapper {
     Slot toSlot(SlotRequest slotRequest);
     @Mapping(target = "therapists", expression = "java(mapTherapists(slot.getSlotDetails()))")
     SlotResponse toSlotResponse(Slot slot);
-    // Phương thức mặc định để ánh xạ SlotInfor -> TherapistResponse
+    // Phương thức mặc định để ánh xạ SlotDetail -> TherapistResponse
     default Set<TherapistResponse> mapTherapists(Set<SlotDetail> slotDetails) {
         if (slotDetails == null) {
             return Set.of();
