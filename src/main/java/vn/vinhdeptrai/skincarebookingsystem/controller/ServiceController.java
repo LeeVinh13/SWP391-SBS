@@ -42,7 +42,7 @@ public class ServiceController {
     }
     @PutMapping("/update/{id}")
     ApiResponse<ServiceResponse> update(@PathVariable int id,@RequestPart("service") ServiceRequest serviceRequest,
-                                        @RequestPart("thumbnail") MultipartFile thumbnail) throws IOException {
+                                        @RequestPart(value = "thumbnail", required = false) MultipartFile thumbnail) throws IOException {
         return ApiResponse.<ServiceResponse>builder()
                 .result(service.update(serviceRequest,id, thumbnail))
                 .build();
