@@ -2,6 +2,8 @@ package vn.vinhdeptrai.skincarebookingsystem.dto.response;
 
 import lombok.*;
 import lombok.experimental.FieldDefaults;
+
+import java.time.LocalDateTime;
 import java.util.Set;
 
 @Getter
@@ -10,8 +12,11 @@ import java.util.Set;
 @AllArgsConstructor
 @Builder
 @FieldDefaults(level = AccessLevel.PRIVATE)
-public class QuestionResponse {
-    int id;
-    String question;
-    Set<AnswerResponse> answers;
+public class BlogResponse {
+    Long id;
+    String title;
+    String content;
+    String thumbnail;
+    LocalDateTime createdAt;
+    LocalDateTime updatedAt;
 }
