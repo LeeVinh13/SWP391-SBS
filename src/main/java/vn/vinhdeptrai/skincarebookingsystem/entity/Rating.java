@@ -27,7 +27,7 @@ public class Rating {
 
     private int stars;
 
-    private String comment;
+    private String comment; //feedback đi kèm (có thể chỉ rating không cần feedback)
 
     private LocalDateTime createdAt;
     
