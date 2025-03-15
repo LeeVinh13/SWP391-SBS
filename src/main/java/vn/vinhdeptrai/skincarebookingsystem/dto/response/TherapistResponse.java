@@ -4,6 +4,7 @@ import com.fasterxml.jackson.annotation.JsonInclude;
 import lombok.*;
 import lombok.experimental.FieldDefaults;
 import org.springframework.web.multipart.MultipartFile;
+import vn.vinhdeptrai.skincarebookingsystem.enums.SlotStatus;
 
 import java.util.Set;
 
@@ -18,4 +19,5 @@ public class TherapistResponse {
     @JsonInclude(JsonInclude.Include.NON_DEFAULT)
     int experience;
     String username, fullname, phone, email, image;
+    SlotStatus status;
 }

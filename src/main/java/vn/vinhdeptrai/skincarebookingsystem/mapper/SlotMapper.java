@@ -4,6 +4,7 @@ import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 import org.mapstruct.MappingTarget;
 import vn.vinhdeptrai.skincarebookingsystem.dto.request.SlotRequest;
+import vn.vinhdeptrai.skincarebookingsystem.dto.response.SlotDetailResponse;
 import vn.vinhdeptrai.skincarebookingsystem.dto.response.SlotResponse;
 import vn.vinhdeptrai.skincarebookingsystem.dto.response.TherapistResponse;
 import vn.vinhdeptrai.skincarebookingsystem.entity.Slot;
@@ -17,7 +18,6 @@ public interface SlotMapper {
     Slot toSlot(SlotRequest slotRequest);
     @Mapping(target = "therapists", expression = "java(mapTherapists(slot.getSlotDetails()))")
     SlotResponse toSlotResponse(Slot slot);
-    // Phương thức mặc định để ánh xạ SlotDetail -> TherapistResponse
     default Set<TherapistResponse> mapTherapists(Set<SlotDetail> slotDetails) {
         if (slotDetails == null) {
             return Set.of();
@@ -26,7 +26,9 @@ public interface SlotMapper {
                 .map(slotDetail -> TherapistResponse.builder()
                         .id(slotDetail.getTherapist().getId())
                         .fullname(slotDetail.getTherapist().getFullname())
+                        .status(slotDetail.getStatus())
                         .build())
                 .collect(Collectors.toSet());
     }
+
 }
