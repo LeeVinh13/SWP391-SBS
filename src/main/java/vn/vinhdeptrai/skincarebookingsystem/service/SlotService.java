@@ -57,11 +57,15 @@ public class SlotService {
         Therapist therapist = therapistRepository.findById(therapistId).orElseThrow(
                 () -> new AppException(ErrorCode.THERAPIST_NOT_FOUND)
         );
-        return slotRepository.findBySlotDetails_TherapistAndSlotDetails_Status(therapist, SlotStatus.AVAILABLE).stream()
+        List<Slot> slots = slotRepository.findBySlotDetails_TherapistAndSlotDetails_Status(therapist, SlotStatus.AVAILABLE);
+        return slots.stream()
                 .map(slot -> {
+                    Set<SlotDetail> slotDetails = slot.getSlotDetails().stream()
+                            .filter(sd -> sd.getTherapist().getId() == therapistId)
+                            .collect(Collectors.toSet());
+                    slot.setSlotDetails(slotDetails);
                     return slotMapper.toSlotResponse(slot);
-                })
-                .toList();
+                }).toList();
     }
 
     public List<SlotResponse> getAvailableSlotsByDate(LocalDate date) {
@@ -84,9 +88,9 @@ public class SlotService {
         List<Slot> slots = slotRepository.findByDateAndSlotDetails_Therapist(date,therapist);
         return slots.stream().map(
                 slot ->{
-                    Set<SlotDetail> slotDetails = slot.getSlotDetails().stream().filter(
-                            slotDetail -> slotDetail.getTherapist().getId() == therapistId
-                    ).collect(Collectors.toSet());
+                    Set<SlotDetail> slotDetails = slot.getSlotDetails().stream()
+                            .filter(slotDetail -> slotDetail.getTherapist().getId() == therapistId)
+                            .collect(Collectors.toSet());
                     slot.setSlotDetails(slotDetails);
                     return slotMapper.toSlotResponse(slot);
                 }
