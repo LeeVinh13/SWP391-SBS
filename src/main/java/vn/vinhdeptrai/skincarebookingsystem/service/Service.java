@@ -43,6 +43,12 @@ public class Service {
         );;
         return serviceMapper.toServiceResponse(service);
     }
+    public List<ServiceResponse> getSignatureService() {
+        List<vn.vinhdeptrai.skincarebookingsystem.entity.Service> signatureServices = serviceRepository.findByCategory_Signature(true);
+        return signatureServices.stream().map(
+                signa -> serviceMapper.toServiceResponse(signa)
+        ).toList();
+    }
     public ServiceResponse create(ServiceRequest serviceRequest, MultipartFile file) throws IOException {
         ServiceCategory serviceCategory = serviceCategoryRepository.findById(serviceRequest.getCategoryId()).orElseThrow(
                 () -> new AppException(ErrorCode.SERVICE_CATE_NOT_FOUND));
