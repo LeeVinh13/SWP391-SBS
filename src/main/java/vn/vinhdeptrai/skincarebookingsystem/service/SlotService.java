@@ -59,13 +59,11 @@ public class SlotService {
         );
         List<Slot> slots = slotRepository.findBySlotDetails_TherapistAndSlotDetails_Status(therapist, SlotStatus.AVAILABLE);
         return slots.stream()
-                .map(slot -> {
-                    Set<SlotDetail> slotDetails = slot.getSlotDetails().stream()
-                            .filter(sd -> sd.getTherapist().getId() == therapistId)
-                            .collect(Collectors.toSet());
-                    slot.setSlotDetails(slotDetails);
+                .map(slot ->{
+                    slot.setSlotDetails(filteredSlotDetailsByTherapist(slot, therapistId));
                     return slotMapper.toSlotResponse(slot);
-                }).toList();
+                })
+                .collect(Collectors.toList());
     }
 
     public List<SlotResponse> getAvailableSlotsByDate(LocalDate date) {
@@ -88,10 +86,7 @@ public class SlotService {
         List<Slot> slots = slotRepository.findByDateAndSlotDetails_Therapist(date,therapist);
         return slots.stream().map(
                 slot ->{
-                    Set<SlotDetail> slotDetails = slot.getSlotDetails().stream()
-                            .filter(slotDetail -> slotDetail.getTherapist().getId() == therapistId)
-                            .collect(Collectors.toSet());
-                    slot.setSlotDetails(slotDetails);
+                    slot.setSlotDetails(filteredSlotDetailsByTherapist(slot, therapistId));
                     return slotMapper.toSlotResponse(slot);
                 }
         ).collect(Collectors.toList());
@@ -136,7 +131,11 @@ public class SlotService {
         slotDetailRepository.saveAll(slotDetails);
         return slotDetails;
     }
-
+    private Set<SlotDetail> filteredSlotDetailsByTherapist(Slot slot, int therapistId) {
+        return slot.getSlotDetails().stream().filter(
+                slotDetail -> slotDetail.getTherapist().getId() == therapistId
+        ).collect(Collectors.toSet());
+    }
     public List<SlotResponse> generateSlotsForDateRange(LocalDate startDate, LocalDate endTime, Set<Integer> therapistIds) {
         List<SlotResponse> allSlots = new ArrayList<>();
         SlotRequest slotRequest = SlotRequest.builder()

@@ -8,4 +8,7 @@ import vn.vinhdeptrai.skincarebookingsystem.entity.User;
 import java.util.Optional;
 @Repository
 public interface AppointmentRepository extends JpaRepository<Appointment, Integer> {
+    Optional<Appointment> findByUser(User user);
+
+    Optional<Appointment> findByTxnRef(String txnRef);
 }
