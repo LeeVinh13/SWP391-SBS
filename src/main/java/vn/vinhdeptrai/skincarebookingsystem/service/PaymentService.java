@@ -30,7 +30,7 @@ public class PaymentService {
         Appointment appointment = appointmentRepository.findById(paymentRequest.getAppointmentId()).orElseThrow(
                 () ->  new AppException(ErrorCode.APPOINTMENT_NOT_FOUND)
         );
-        long amount = (long)paymentRequest.getAmount() *100L;
+        long amount = (long)appointment.getDepositAmount()*100L;
         String bankCode = paymentRequest.getBankCode();
         String vnp_TxnRef = String.valueOf(paymentRequest.getAppointmentId());
         Map<String, String> vnPayParams = vnPayConfig.getVNPayConfig();

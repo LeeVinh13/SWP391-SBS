@@ -2,6 +2,9 @@ package vn.vinhdeptrai.skincarebookingsystem.dto.response;
 
 import lombok.*;
 import lombok.experimental.FieldDefaults;
+import vn.vinhdeptrai.skincarebookingsystem.entity.Role;
+
+import java.util.Set;
 
 @Data
 @AllArgsConstructor
@@ -11,4 +14,5 @@ import lombok.experimental.FieldDefaults;
 public class AuthenticationResponse {
     boolean authenticated;
     String token;
+    Set<RoleResponse> roles;
 }
