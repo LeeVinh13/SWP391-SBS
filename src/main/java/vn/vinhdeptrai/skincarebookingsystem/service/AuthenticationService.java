@@ -22,11 +22,13 @@ import vn.vinhdeptrai.skincarebookingsystem.dto.request.RegisterRequest;
 import vn.vinhdeptrai.skincarebookingsystem.dto.response.AuthenticationResponse;
 import vn.vinhdeptrai.skincarebookingsystem.dto.response.IntrospectResponse;
 import vn.vinhdeptrai.skincarebookingsystem.dto.response.RegisterResponse;
+import vn.vinhdeptrai.skincarebookingsystem.dto.response.RoleResponse;
 import vn.vinhdeptrai.skincarebookingsystem.entity.InvalidatedToken;
 import vn.vinhdeptrai.skincarebookingsystem.entity.Role;
 import vn.vinhdeptrai.skincarebookingsystem.entity.User;
 import vn.vinhdeptrai.skincarebookingsystem.exception.AppException;
 import vn.vinhdeptrai.skincarebookingsystem.exception.ErrorCode;
+import vn.vinhdeptrai.skincarebookingsystem.mapper.RoleMapper;
 import vn.vinhdeptrai.skincarebookingsystem.repository.InvalidatedTokenRepository;
 import vn.vinhdeptrai.skincarebookingsystem.repository.RoleRepository;
 import vn.vinhdeptrai.skincarebookingsystem.repository.UserRepository;
@@ -38,6 +40,8 @@ import java.util.Date;
 import java.util.Set;
 import java.util.StringJoiner;
 import java.util.UUID;
+import java.util.stream.Collectors;
+
 @Slf4j
 @Service
 @RequiredArgsConstructor
@@ -45,13 +49,14 @@ import java.util.UUID;
 public class AuthenticationService {
     UserRepository userRepository;
     RoleRepository roleRepository;
+    private final RoleMapper roleMapper;
     //SIGNER KEY là chuỗi secret key, dùng để ký JWT or mã hóa data
     @NonFinal
     @Value("${signerkey}")
     String SIGNERKEY;
     PasswordEncoder passwordEncoder;
     InvalidatedTokenRepository invalidatedTokenRepository;
-    // hàm xác thực khi người dùng đăng nhập hệ thống
+
     public AuthenticationResponse login(AuthenticationRequest authenticationRequest) {
         User user = userRepository.findByUsername(authenticationRequest.getUsername()).orElseThrow(
                 () -> new AppException(ErrorCode.USER_NOT_FOUND)
@@ -62,10 +67,16 @@ public class AuthenticationService {
 //            throw new AppException(ErrorCode.UNAUTHENTICATED);
 //        }
 
+        Set<RoleResponse> roleResponses = user.getRole().stream().map(
+                role -> {
+                    return roleMapper.toRoleResponse(role);
+                }
+        ).collect(Collectors.toSet());
         String token = generateToken(user);
         return AuthenticationResponse.builder()
                 .authenticated(true)
                 .token(token)
+                .roles(roleResponses)
                 .build();
     }
     public RegisterResponse register(RegisterRequest registerRequest) {
