@@ -47,5 +47,6 @@ public class Appointment {
     @Enumerated(EnumType.STRING)
     PaymentStatus paymentStatus;
 
+    String txnRef;
 
 }

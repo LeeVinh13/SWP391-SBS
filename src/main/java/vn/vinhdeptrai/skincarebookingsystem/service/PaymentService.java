@@ -18,6 +18,7 @@ import vn.vinhdeptrai.skincarebookingsystem.repository.AppointmentRepository;
 import vn.vinhdeptrai.skincarebookingsystem.util.VNPayUtil;
 
 import java.util.Map;
+import java.util.UUID;
 
 @Service
 @RequiredArgsConstructor
@@ -32,7 +33,7 @@ public class PaymentService {
         );
         long amount = (long)appointment.getDepositAmount()*100L;
         String bankCode = paymentRequest.getBankCode();
-        String vnp_TxnRef = String.valueOf(paymentRequest.getAppointmentId());
+        String vnp_TxnRef = UUID.randomUUID().toString();
         Map<String, String> vnPayParams = vnPayConfig.getVNPayConfig();
         vnPayParams.put("vnp_Amount", String.valueOf(amount));
         if(bankCode != null && !bankCode.isEmpty()) {
@@ -47,6 +48,8 @@ public class PaymentService {
         String vnpSecureHash = VNPayUtil.hmacSHA512(vnPayConfig.getSecretKey(), hashData);
         queryUrl += "&vnp_SecureHash=" + vnpSecureHash;
         String paymentUrl = vnPayConfig.getVnp_PayUrl() + "?" + queryUrl;
+        appointment.setTxnRef(vnp_TxnRef);
+        appointmentRepository.save(appointment);
         return PaymentResponse.builder()
                 .code("00")
                 .message("Payment URL created successfully")
@@ -54,11 +57,11 @@ public class PaymentService {
                 .build();
     }
     public PaymentResponse handlerVNPayCallback(HttpServletRequest httpServletRequest) {
-        Appointment appointment = appointmentRepository.findById(Integer.parseInt(httpServletRequest.getParameter("vnp_TxnRef"))).orElseThrow(
+        Appointment appointment = appointmentRepository.findByTxnRef(httpServletRequest.getParameter("vnp_TxnRef")).orElseThrow(
                 () -> new AppException(ErrorCode.APPOINTMENT_NOT_FOUND)
         );
         String vnp_ResponseCode = httpServletRequest.getParameter("vnp_ResponseCode");
-       if(vnp_ResponseCode.equals("00")){
+        if(vnp_ResponseCode.equals("00")){
             appointment.setAppointmentStatus(AppointmentStatus.APPROVED);
             appointment.setPaymentStatus(PaymentStatus.PARTIALLY_PAID);
             appointmentRepository.save(appointment);
@@ -66,15 +69,15 @@ public class PaymentService {
                     .code("00")
                     .message("Payment successfully")
                     .build();
-       }
-       appointment.getSlotDetail().setStatus(SlotStatus.AVAILABLE);
-       appointment.setPaymentStatus(PaymentStatus.FAILED);
-       appointment.setAppointmentStatus(AppointmentStatus.REJECTED);
-       appointmentRepository.save(appointment);
-       return PaymentResponse.builder()
-               .code(vnp_ResponseCode)
-               .message("Payment failed")
-               .build();
+        }
+        appointment.getSlotDetail().setStatus(SlotStatus.AVAILABLE);
+        appointment.setPaymentStatus(PaymentStatus.FAILED);
+        appointment.setAppointmentStatus(AppointmentStatus.REJECTED);
+        appointmentRepository.save(appointment);
+        return PaymentResponse.builder()
+                .code(vnp_ResponseCode)
+                .message("Payment failed")
+                .build();
 
     }
 }
