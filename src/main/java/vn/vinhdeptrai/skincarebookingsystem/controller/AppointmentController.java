@@ -1,5 +1,6 @@
 package vn.vinhdeptrai.skincarebookingsystem.controller;
 
+import com.cloudinary.Api;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
@@ -29,6 +30,18 @@ public class AppointmentController {
                 .result(appointmentService.getAppointment(id))
                 .build();
     }
+    @GetMapping("/my-upcoming-appointment")
+    public ApiResponse<List<AppointmentResponse>> getMyAppointment(){
+        return ApiResponse.<List<AppointmentResponse>>builder()
+                .result(appointmentService.myUpcomingAppointment())
+                .build();
+    }
+    @GetMapping("/my-historical-appointment")
+    public ApiResponse<List<AppointmentResponse>> getMyHistoricalAppointment(){
+        return ApiResponse.<List<AppointmentResponse>>builder()
+                .result(appointmentService.myHistoricalAppointment())
+                .build();
+    }
     @PostMapping("/create")
     public ApiResponse<AppointmentResponse> create(@RequestBody AppointmentRequest appointmentRequest) {
         return ApiResponse.<AppointmentResponse>builder()
@@ -53,4 +66,5 @@ public class AppointmentController {
         return ApiResponse.<Void>builder()
                 .build();
     }
+
 }
