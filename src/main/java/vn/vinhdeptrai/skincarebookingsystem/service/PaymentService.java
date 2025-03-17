@@ -17,6 +17,7 @@ import vn.vinhdeptrai.skincarebookingsystem.exception.ErrorCode;
 import vn.vinhdeptrai.skincarebookingsystem.repository.AppointmentRepository;
 import vn.vinhdeptrai.skincarebookingsystem.util.VNPayUtil;
 
+import java.time.LocalDateTime;
 import java.util.Map;
 import java.util.UUID;
 
@@ -70,6 +71,7 @@ public class PaymentService {
                     .message("Payment successfully")
                     .build();
         }
+        appointment.setCancelAt(LocalDateTime.now());
         appointment.getSlotDetail().setStatus(SlotStatus.AVAILABLE);
         appointment.setPaymentStatus(PaymentStatus.FAILED);
         appointment.setAppointmentStatus(AppointmentStatus.REJECTED);

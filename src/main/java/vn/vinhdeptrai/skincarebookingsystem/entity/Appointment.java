@@ -24,11 +24,11 @@ public class Appointment {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     int id;
-    LocalDateTime createAt;
-    LocalDateTime updateAt;
     String note;
     double price;
     double depositAmount;
+    double remainingAmount;
+
     @ManyToOne
     @JoinColumn(name ="userId")
     User user;
@@ -48,5 +48,7 @@ public class Appointment {
     PaymentStatus paymentStatus;
 
     String txnRef;
-
+    LocalDateTime createAt;
+    LocalDateTime updateAt;
+    LocalDateTime cancelAt;
 }

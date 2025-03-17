@@ -15,6 +15,6 @@ public class ServiceRequest {
     String description;
     double price;
     String duration;
-    MultipartFile thumbnail;
+//    MultipartFile thumbnail;
     int categoryId;
 }

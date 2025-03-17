@@ -21,6 +21,7 @@ public class AppointmentResponse {
     String fullname, email,note;
     double price;
     double depositAmount;
+    double remainingAmount;
     LocalDate date;
     LocalTime time;
     ServiceResponse service;
