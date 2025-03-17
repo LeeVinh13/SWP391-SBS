@@ -11,7 +11,6 @@ public enum ErrorCode {
     INVALID_USERNAME(1002, "Username must be at least {min} characters", HttpStatus.BAD_REQUEST),
     INVALID_PASSWORD(1003, "Password must be at least {min} characters", HttpStatus.BAD_REQUEST),
     INVALID_CONFIRM_PASSWORD(1004, "Confirm Password and Password does not match", HttpStatus.BAD_REQUEST),
-
     UNAUTHENTICATED(1005,"UNAUTHENTICATED!", HttpStatus.UNAUTHORIZED),
     UNAUTHORIZED(1006, "You do not have permission", HttpStatus.FORBIDDEN),
 
@@ -35,7 +34,9 @@ public enum ErrorCode {
     BLOG_NOT_FOUND(2007,"BLOG NOT FOUND!", HttpStatus.NOT_FOUND),
     RATING_NOT_FOUND(2008,"RATING NOT FOUND!", HttpStatus.NOT_FOUND),
     RATING_ALREADY_EXIST(2009,"RATING ALREADY EXIST!", HttpStatus.CONFLICT),
-    APPOINTMENT_NOT_APPROVED(2010,"APPOINTMENT NOT APPROVED!", HttpStatus.CONFLICT);
+    APPOINTMENT_NOT_APPROVED(2010,"APPOINTMENT NOT APPROVED!", HttpStatus.CONFLICT),
+    INVALID_OLD_PASSWORD(2011, "Old password is incorrect", HttpStatus.BAD_REQUEST),
+    CONFIRM_PASSWORD_NOT_MATCH(2012, "New password and confirm password do not match", HttpStatus.BAD_REQUEST);
     public int code;
     public String message;
     public HttpStatusCode statusCode;

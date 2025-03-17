@@ -2,12 +2,14 @@ package vn.vinhdeptrai.skincarebookingsystem.controller;
 import java.util.List;
 
 
+import jakarta.validation.Valid;
 import org.springframework.web.bind.annotation.*;
 
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
 import lombok.extern.slf4j.Slf4j;
+import vn.vinhdeptrai.skincarebookingsystem.dto.request.ChangePasswordRequest;
 import vn.vinhdeptrai.skincarebookingsystem.dto.request.UserCreationRequest;
 import vn.vinhdeptrai.skincarebookingsystem.dto.request.UserUpdateRequest;
 import vn.vinhdeptrai.skincarebookingsystem.dto.response.ApiResponse;
@@ -59,5 +61,9 @@ public class UserController {
                 .build();
     }
 
-
+    @PostMapping("/change-password")
+    public ApiResponse<Void> changePassword(@Valid @RequestBody ChangePasswordRequest request) {
+        userService.changePassword(request);
+        return ApiResponse.<Void>builder().build();
+    }
 }
