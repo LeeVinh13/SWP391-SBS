@@ -3,6 +3,8 @@ package vn.vinhdeptrai.skincarebookingsystem.controller;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
+
+import org.springframework.data.domain.Page;
 import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
@@ -56,5 +58,29 @@ public class BlogController {
    void deleteUser(@PathVariable int id) {
        this.blogService.delete(id);
    }
+
+   @GetMapping("/sort/{field}/{sortOrder}")
+   public ApiResponse<List<BlogResponse>> getAllWithSort(@PathVariable String field, @PathVariable String sortOrder) {
+       return ApiResponse.<List<BlogResponse>>builder()
+               .result(blogService.getAllWithSort(field, sortOrder))
+               .build();
+   }
+
+   @GetMapping("/pagination/{page}/{size}")
+   public ApiResponse<Page<BlogResponse>> getAllWithPagination(@PathVariable int page, @PathVariable int size) {
+       return ApiResponse.<Page<BlogResponse>>builder()
+               .result(blogService.getAllWithPagination(page, size))
+               .build();
+   }
+
+   @GetMapping("/pagination/{page}/{size}/{field}/{sortOrder}")
+   public ApiResponse<Page<BlogResponse>> getAllWithPaginationAndSort(@PathVariable int page, @PathVariable int size, @PathVariable String field, @PathVariable String sortOrder) {
+       return ApiResponse.<Page<BlogResponse>>builder()
+               .result(blogService.getAllWithPaginationAndSort(page, size, field, sortOrder))
+               .build();
+   }
+   
+   
+
 }
 

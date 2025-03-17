@@ -4,6 +4,10 @@ import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
 import lombok.extern.slf4j.Slf4j;
+
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Sort;
 import org.springframework.web.multipart.MultipartFile;
 
 import vn.vinhdeptrai.skincarebookingsystem.dto.request.BlogRequest;
@@ -66,5 +70,20 @@ public class BlogService {
 
    public void delete(int id) {
        blogRepository.deleteById(id);
+   }
+
+   public List<BlogResponse> getAllWithSort(String field, String sortOrder) {
+        return blogRepository.findAll(Sort.by(Sort.Direction.fromString(sortOrder), field)).stream().map(blogMapper::toBlogResponse).toList();
+   }
+
+   public Page<BlogResponse> getAllWithPagination(int page, int size) {
+        Page<Blog> blogs = blogRepository.findAll(PageRequest.of(page, size));
+        return blogs.map(blogMapper::toBlogResponse);
+   }
+
+   public Page<BlogResponse> getAllWithPaginationAndSort(int page, int size, String field, String sortOrder) {
+        Page<Blog> blogs = blogRepository.findAll(PageRequest.of(page, size)
+            .withSort(Sort.by(Sort.Direction.fromString(sortOrder), field)));
+        return blogs.map(blogMapper::toBlogResponse);
    }
 }

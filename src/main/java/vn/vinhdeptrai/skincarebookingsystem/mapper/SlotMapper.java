@@ -2,9 +2,7 @@ package vn.vinhdeptrai.skincarebookingsystem.mapper;
 
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
-import org.mapstruct.MappingTarget;
 import vn.vinhdeptrai.skincarebookingsystem.dto.request.SlotRequest;
-import vn.vinhdeptrai.skincarebookingsystem.dto.response.SlotDetailResponse;
 import vn.vinhdeptrai.skincarebookingsystem.dto.response.SlotResponse;
 import vn.vinhdeptrai.skincarebookingsystem.dto.response.TherapistResponse;
 import vn.vinhdeptrai.skincarebookingsystem.entity.Slot;
