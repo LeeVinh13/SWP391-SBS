@@ -2,8 +2,6 @@ package vn.vinhdeptrai.skincarebookingsystem.dto.response;
 
 import lombok.*;
 import lombok.experimental.FieldDefaults;
-import vn.vinhdeptrai.skincarebookingsystem.entity.Quiz;
-import vn.vinhdeptrai.skincarebookingsystem.entity.Service;
 
 @Getter
 @Setter
@@ -13,8 +11,10 @@ import vn.vinhdeptrai.skincarebookingsystem.entity.Service;
 @FieldDefaults(level = AccessLevel.PRIVATE)
 public class ServiceRecommendationResponse {
     long id;
-    Quiz quiz;
-    Service service;
+    int quiz_id;
+    String quiz_title;
+    int service_id;
+    String service_name;
     int minScore;
     int maxScore;
 }
