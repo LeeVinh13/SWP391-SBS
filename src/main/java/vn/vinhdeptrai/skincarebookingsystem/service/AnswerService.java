@@ -64,10 +64,8 @@ public class AnswerService {
         Answer answer = answerRepository.findById(answerId)
                 .orElseThrow(() -> new AppException(ErrorCode.ANSWER_NOT_FOUND));
 
-        answer = Answer.builder()
-                .answer(request.getAnswer())
-                .score(request.getScore())
-                .build();
+        answer.setAnswer(request.getAnswer());
+        answer.setScore(request.getScore());
         return answerMapper.toAnswerResponse(answerRepository.save(answer));
     }
 
