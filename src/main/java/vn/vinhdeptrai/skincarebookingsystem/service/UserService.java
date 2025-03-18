@@ -63,7 +63,7 @@ public class UserService {
         user.setRole((roles));
         return userMapper.toUserResponse(userRepository.save(user));
     }
-    @PreAuthorize("hasRole('ADMIN')")
+//    @PreAuthorize("hasRole('ADMIN')")
     public void delete(int id){
         User user = userRepository.findById(id).orElseThrow(
                 () -> new AppException(ErrorCode.USER_NOT_FOUND));
@@ -74,7 +74,7 @@ public class UserService {
         User user = userRepository.findByUsername(name).orElseThrow(() -> new AppException(ErrorCode.USER_NOT_FOUND));
         return userMapper.toUserResponse(user);
     }
-    public UserResponse getUser(int id){
+    public UserResponse getById(int id){
         User user = userRepository.findById(id).orElseThrow(() -> new AppException(ErrorCode.USER_NOT_FOUND));
         return userMapper.toUserResponse(user);
     }
@@ -82,6 +82,9 @@ public class UserService {
     public List<UserResponse> getAllUser(){
         //lỗi null
         List<User> users = userRepository.findAll();
+        if(users.isEmpty()){
+            throw new AppException(ErrorCode.USER_NOT_FOUND);
+        }
         return users.stream().map(user -> userMapper.toUserResponse(user)).toList();
     }
     

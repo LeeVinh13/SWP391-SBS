@@ -30,11 +30,16 @@ public class UserController {
                 .result(userService.getAllUser())
                 .build();
     }
-
-    @GetMapping("/{userId}")
-    public ApiResponse<UserResponse> getUserById(@PathVariable int userId) {
+    @GetMapping("/myInfor")
+    public ApiResponse<UserResponse> myInfor(){
         return ApiResponse.<UserResponse>builder()
-                .result(userService.getUser(userId))
+                .result(userService.myInfor())
+                .build();
+    }
+    @GetMapping("/{userId}")
+    public ApiResponse<UserResponse> getById(@PathVariable int userId) {
+        return ApiResponse.<UserResponse>builder()
+                .result(userService.getById(userId))
                 .build();
     }
     @PostMapping("/create")
@@ -51,14 +56,9 @@ public class UserController {
     }
 
     @DeleteMapping("/delete/{userId}")
-    void deleteUser(@PathVariable int userId) {
+    public ApiResponse<Void> delete(@PathVariable int userId) {
         this.userService.delete(userId);
-    }
-    @GetMapping("/myInfor")
-    public ApiResponse<UserResponse> myInfor(){
-        return ApiResponse.<UserResponse>builder()
-                .result(userService.myInfor())
-                .build();
+        return ApiResponse.<Void>builder().build();
     }
 
     @PostMapping("/change-password")

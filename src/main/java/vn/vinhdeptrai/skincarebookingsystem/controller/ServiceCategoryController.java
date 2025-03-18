@@ -44,7 +44,7 @@ public class ServiceCategoryController {
     }
 
     @DeleteMapping("/delete/{id}")
-    ApiResponse<ServiceCategoryResponse> deleteUser(@PathVariable int id) {
+    ApiResponse<ServiceCategoryResponse> delete(@PathVariable int id) {
         this.categoryService.delete(id);
         return ApiResponse.<ServiceCategoryResponse>builder()
                 .build();

@@ -19,16 +19,8 @@ import java.util.List;
 public class Therapist extends User{
     int experience;
     String image;
-    String specialty;
     String description;
     @OneToMany(mappedBy = "therapist", cascade = CascadeType.ALL,fetch = FetchType.EAGER)
     List<SlotDetail> slotDetails;
 
-    @ManyToMany
-    @JoinTable(
-            name = "therapist_servicecategory",
-            joinColumns = @JoinColumn(name = "therapist_id"),
-            inverseJoinColumns = @JoinColumn(name = "servicecategory_id")
-    )
-    List<ServiceCategory> categories;
 }

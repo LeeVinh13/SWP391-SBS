@@ -16,7 +16,7 @@ import java.util.List;
 @Builder
 @FieldDefaults(level = AccessLevel.PRIVATE)
 public class TherapistRequest {
-    String username, password, fullname, phone, email;
+    String username, password, fullname, phone, email,description;
     int experience;
-    MultipartFile image;
+//    MultipartFile image;
 }

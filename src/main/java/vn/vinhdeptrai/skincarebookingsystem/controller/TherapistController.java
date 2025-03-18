@@ -29,6 +29,12 @@ public class TherapistController {
                 .result(therapistService.getAll())
                 .build();
     }
+    @GetMapping("{id}")
+    public ApiResponse<TherapistResponse> getTherapistById(@PathVariable int id) {
+        return ApiResponse.<TherapistResponse>builder()
+                .result(therapistService.getById(id))
+                .build();
+    }
     @PostMapping(value="/create", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     public ApiResponse<TherapistResponse> create(@RequestPart("therapist") TherapistRequest therapistRequest,
                                                  @RequestPart(value = "thumbnail", required = false) MultipartFile thumbnail) throws IOException {
