@@ -24,6 +24,16 @@ public enum ErrorCode {
     SERVICE_CATE_NOT_FOUND(1010,"SERVICE CATEGORY NOT FOUND!", HttpStatus.NOT_FOUND),
     APPOINTMENT_NOT_FOUND(1014,"APPOINTMENT NOT FOUND!", HttpStatus.NOT_FOUND),
 
+    CATEGORY_CONTAINING_SERVICE(1015, "Cannot delete category because it contain service!", HttpStatus.NOT_FOUND),
+
+    QUIZ_NOT_FOUND(2000, "Quiz not found!", HttpStatus.NOT_FOUND),
+    QUESTION_NOT_FOUND(2001, "Question not found!", HttpStatus.NOT_FOUND),
+    CATEGORY_ALREADY_EXIST_QUIZ(2002, "This category already has a quiz", HttpStatus.BAD_REQUEST),
+    QUESTION_EXISTED(2003, "Question existed!", HttpStatus.CONFLICT),
+    ANSWER_NOT_FOUND(2004, "Answer not found!", HttpStatus.NOT_FOUND),
+    SERVICE_RECOMMENDATION_NOT_FOUND(2005, "Service recommendation not found!", HttpStatus.NOT_FOUND),
+    SERVICE_RECOMMENDATION_EXISTED(2006, "Service recommendation existed!", HttpStatus.CONFLICT);
+    
     QUIZ_NOT_FOUND(2000,"QUIZ NOT FOUND!", HttpStatus.NOT_FOUND),
     QUESTION_NOT_FOUND(2001,"QUESTION NOT FOUND!", HttpStatus.NOT_FOUND),
     CATEGORY_ALREADY_EXIST_QUIZ(2002,"THIS CATEGORY ALREADY HAVE A QUIZ", HttpStatus.BAD_REQUEST),
@@ -40,6 +50,7 @@ public enum ErrorCode {
     public int code;
     public String message;
     public HttpStatusCode statusCode;
+
 
     ErrorCode(int code, String message, HttpStatusCode statusCode) {
         this.code = code;
