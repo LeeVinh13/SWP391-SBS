@@ -77,11 +77,9 @@ public class QuizService {
             }
         }
 
-        quiz = Quiz.builder()
-                .category(serviceCategory)
-                .title(quizUpdateRequest.getTitle())
-                .questions(questions)
-                .build();
+        quiz.setCategory(serviceCategory);
+        quiz.setTitle(quizUpdateRequest.getTitle());
+        quiz.setQuestions(questions);
         return quizMapper.toQuizResponse(quizRepository.save(quiz));
     }
 
