@@ -18,6 +18,6 @@ public class TherapistResponse {
     int id;
     @JsonInclude(JsonInclude.Include.NON_DEFAULT)
     int experience;
-    String username, fullname, phone, email, image;
+    String username, fullname, phone, email, image, description;
     SlotStatus status;
 }
