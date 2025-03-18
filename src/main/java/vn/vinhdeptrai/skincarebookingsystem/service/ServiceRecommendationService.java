@@ -81,12 +81,10 @@ public class ServiceRecommendationService {
        ServiceRecommendation serviceRecommendation = serviceRecommendationRepository.findById(serviceRecommendationId)
             .orElseThrow(() -> new AppException(ErrorCode.SERVICE_RECOMMENDATION_NOT_FOUND));
 
-       serviceRecommendation = ServiceRecommendation.builder()
-            .quiz(quiz)
-            .service(service)
-            .minScore(request.getMinScore())
-            .maxScore(request.getMaxScore())
-            .build();
+       serviceRecommendation.setQuiz(quiz);
+       serviceRecommendation.setService(service);
+       serviceRecommendation.setMinScore(request.getMinScore());
+       serviceRecommendation.setMaxScore(request.getMaxScore());
             
         return serviceRecommendationMapper.toServiceRecommendationResponse(serviceRecommendationRepository.save(serviceRecommendation));
    }
