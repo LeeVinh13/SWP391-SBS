@@ -68,10 +68,8 @@ public class QuestionService {
             }
         }
 
-        question = Question.builder()
-                .question(questionUpdateRequest.getQuestion())
-                .answers(answers)
-                .build();
+        question.setQuestion(questionUpdateRequest.getQuestion());
+        question.setAnswers(answers);
         return questionMapper.toQuestionResponse(questionRepository.save(question));
     }
 
