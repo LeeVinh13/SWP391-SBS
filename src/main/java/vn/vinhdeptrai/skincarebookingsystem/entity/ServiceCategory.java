@@ -24,6 +24,5 @@ public class ServiceCategory{
     boolean signature;
     @OneToMany(mappedBy = "category")
     Set<Service> services;
-    @ManyToMany(mappedBy = "categories")
-    Set<Therapist> therapists;
+
 }
