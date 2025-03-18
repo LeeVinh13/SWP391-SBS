@@ -42,6 +42,13 @@ public class AnswerController {
                 .build();
     }
 
+    @PostMapping("/create/{questionID}")
+    public ApiResponse<AnswerResponse> createForQuestion(@RequestBody AnswerRequest request, @PathVariable int questionID) {
+        return ApiResponse.<AnswerResponse>builder()
+                .result(answerService.createForQuestion(request, questionID))
+                .build();
+    }
+
     @PutMapping("/update/{answerId}")
     ApiResponse<AnswerResponse> update(@PathVariable int answerId, @RequestBody AnswerRequest request) {
         return ApiResponse.<AnswerResponse>builder()
