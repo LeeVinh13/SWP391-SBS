@@ -22,7 +22,7 @@ public class ServiceCategory{
     String name;
     String description;
     boolean signature;
-    @OneToMany(mappedBy = "category", cascade = CascadeType.ALL)
+    @OneToMany(mappedBy = "category")
     Set<Service> services;
     @ManyToMany(mappedBy = "categories")
     Set<Therapist> therapists;
