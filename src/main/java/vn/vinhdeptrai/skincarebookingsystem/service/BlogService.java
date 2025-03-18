@@ -27,7 +27,7 @@ import java.util.List;
 @RequiredArgsConstructor
 @FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)
 @Slf4j
-public class BlogService {
+public class    BlogService {
    CloudinaryUtil cloudinaryUtil;
    BlogRepository blogRepository;
    BlogMapper blogMapper;
@@ -55,20 +55,24 @@ public class BlogService {
        return blogMapper.toBlogResponse(blogRepository.save(blog));
    }
 
-   public BlogResponse update(BlogRequest blogRequest, int id, MultipartFile file) throws IOException {
-       Blog blog = blogRepository.findById(id).orElseThrow(
-               () -> new AppException(ErrorCode.BLOG_NOT_FOUND)
-       );
-       blog = Blog.builder()
-            .title(blogRequest.getTitle())
-            .content(blogRequest.getContent())
-            .thumbnail(cloudinaryUtil.uploadImage(file))
-            .updatedAt(LocalDateTime.now())
-            .build();
-       return blogMapper.toBlogResponse(blogRepository.save(blog));
-   }
+    public BlogResponse update(BlogRequest blogRequest, int id, MultipartFile file) throws IOException {
+        Blog blog = blogRepository.findById(id).orElseThrow(
+                () -> new AppException(ErrorCode.BLOG_NOT_FOUND)
+        );
 
-   public void delete(int id) {
+        blog.setTitle(blogRequest.getTitle());
+        blog.setContent(blogRequest.getContent());
+        blog.setUpdatedAt(LocalDateTime.now());
+
+        if (file != null && !file.isEmpty()) {
+            blog.setThumbnail(cloudinaryUtil.uploadImage(file)); // Cập nhật thumbnail nếu có ảnh mới
+        }
+
+        return blogMapper.toBlogResponse(blogRepository.save(blog));
+    }
+
+
+    public void delete(int id) {
        blogRepository.deleteById(id);
    }
 
