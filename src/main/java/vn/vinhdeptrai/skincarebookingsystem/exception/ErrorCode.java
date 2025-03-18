@@ -33,7 +33,7 @@ public enum ErrorCode {
     QUESTION_EXISTED(2003, "Question existed!", HttpStatus.CONFLICT),
     ANSWER_NOT_FOUND(2004, "Answer not found!", HttpStatus.NOT_FOUND),
     SERVICE_RECOMMENDATION_NOT_FOUND(2005, "Service recommendation not found!", HttpStatus.NOT_FOUND),
-    SERVICE_RECOMMENDATION_EXISTED(2006, "Service recommendation existed!", HttpStatus.CONFLICT);
+    SERVICE_RECOMMENDATION_EXISTED(2006, "Service recommendation existed!", HttpStatus.CONFLICT),
     BLOG_NOT_FOUND(2007,"BLOG NOT FOUND!", HttpStatus.NOT_FOUND),
     RATING_NOT_FOUND(2008,"RATING NOT FOUND!", HttpStatus.NOT_FOUND),
     RATING_ALREADY_EXIST(2009,"RATING ALREADY EXIST!", HttpStatus.CONFLICT),
