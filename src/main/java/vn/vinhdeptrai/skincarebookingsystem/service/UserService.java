@@ -12,6 +12,7 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import vn.vinhdeptrai.skincarebookingsystem.constant.PredefinedRole;
+import vn.vinhdeptrai.skincarebookingsystem.dto.request.ChangePasswordRequest;
 import vn.vinhdeptrai.skincarebookingsystem.dto.request.UserCreationRequest;
 import vn.vinhdeptrai.skincarebookingsystem.dto.request.UserUpdateRequest;
 import vn.vinhdeptrai.skincarebookingsystem.dto.response.UserResponse;
@@ -37,7 +38,7 @@ public class UserService {
     UserMapper userMapper;
     RoleService roleService;
     RoleRepository roleRepository;
-//    PasswordEncoder passwordEncoder;
+    PasswordEncoder passwordEncoder;
 
     public UserResponse create(UserCreationRequest userCreationRequest)  {
         if(userRepository.existsByUsername((userCreationRequest.getUsername()))){
@@ -47,14 +48,16 @@ public class UserService {
         Role role = roleRepository.findByName(PredefinedRole.USER_ROLE).orElseThrow(
                 () -> new AppException(ErrorCode.ROLE_NOT_FOUND));
         user.setRole(Set.of(role));
-//        user.setPassword(passwordEncoder.encode(userCreationRequest.getPassword()));
+        user.setPassword(passwordEncoder.encode(userCreationRequest.getPassword()));
         userRepository.save(user);
         return userMapper.toUserResponse(user);
     }
     public UserResponse update(int id, UserUpdateRequest userUpdateRequest){
         User user = userRepository.findById(id).orElseThrow(() -> new AppException(ErrorCode.USER_NOT_FOUND));
         userMapper.updateUser(user, userUpdateRequest);
-//        user.setPassword(passwordEncoder.encode(userUpdateRequest.getPassword()));
+        if (userUpdateRequest.getPassword() != null && !userUpdateRequest.getPassword().isEmpty()) {
+            user.setPassword(passwordEncoder.encode(userUpdateRequest.getPassword()));
+        }
         Set<Role> roles = userUpdateRequest.getRole().stream().map(roleName -> roleRepository.findByName(roleName)
                 .orElseThrow(() -> new AppException(ErrorCode.ROLE_NOT_FOUND))).collect(Collectors.toSet());
         user.setRole((roles));
@@ -80,5 +83,26 @@ public class UserService {
         //lỗi null
         List<User> users = userRepository.findAll();
         return users.stream().map(user -> userMapper.toUserResponse(user)).toList();
+    }
+    
+    public void changePassword(ChangePasswordRequest request) {
+        // current user
+        String username = SecurityContextHolder.getContext().getAuthentication().getName();
+        User user = userRepository.findByUsername(username)
+                .orElseThrow(() -> new AppException(ErrorCode.USER_NOT_FOUND));
+        
+        // check old password
+        if (!passwordEncoder.matches(request.getOldPassword(), user.getPassword())) {
+            throw new AppException(ErrorCode.INVALID_OLD_PASSWORD);
+        }
+        
+        // check new password and confirm password
+        if (!request.getNewPassword().equals(request.getConfirmPassword())) {
+            throw new AppException(ErrorCode.CONFIRM_PASSWORD_NOT_MATCH);
+        }
+        
+        // update new password
+        user.setPassword(passwordEncoder.encode(request.getNewPassword()));
+        userRepository.save(user);
     }
 }

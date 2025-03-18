@@ -5,13 +5,17 @@ import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Service;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestBody;
 import vn.vinhdeptrai.skincarebookingsystem.dto.request.AnswerRequest;
 import vn.vinhdeptrai.skincarebookingsystem.dto.response.AnswerResponse;
 import vn.vinhdeptrai.skincarebookingsystem.entity.Answer;
+import vn.vinhdeptrai.skincarebookingsystem.entity.Question;
 import vn.vinhdeptrai.skincarebookingsystem.exception.AppException;
 import vn.vinhdeptrai.skincarebookingsystem.exception.ErrorCode;
 import vn.vinhdeptrai.skincarebookingsystem.mapper.AnswerMapper;
 import vn.vinhdeptrai.skincarebookingsystem.repository.AnswerRepository;
+import vn.vinhdeptrai.skincarebookingsystem.repository.QuestionRepository;
 
 import java.util.List;
 import java.util.stream.Collectors;
@@ -22,6 +26,7 @@ import java.util.stream.Collectors;
 public class AnswerService {
     private final AnswerRepository answerRepository;
     AnswerMapper answerMapper;
+    private final QuestionRepository questionRepository;
 
     public List<AnswerResponse> getAnswerList() {
         List<Answer> answerList = answerRepository.findAll();
@@ -40,6 +45,15 @@ public class AnswerService {
 
         Answer answer = answerMapper.toAnswer(request);
 
+        return answerMapper.toAnswerResponse(answerRepository.save(answer));
+    }
+
+    public AnswerResponse createForQuestion(@RequestBody AnswerRequest request, @PathVariable int questionID) {
+        Question question = questionRepository.findById(questionID)
+                .orElseThrow(() -> new AppException(ErrorCode.QUESTION_NOT_FOUND));
+
+        Answer answer = answerMapper.toAnswer(request);
+        answer.setQuestion(question);
         return answerMapper.toAnswerResponse(answerRepository.save(answer));
     }
 
