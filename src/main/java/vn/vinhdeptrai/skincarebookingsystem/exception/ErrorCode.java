@@ -28,6 +28,8 @@ public enum ErrorCode {
     SERVICE_CATE_NOT_FOUND(1010, "Service category not found!", HttpStatus.NOT_FOUND),
     APPOINTMENT_NOT_FOUND(1014, "Appointment not found!", HttpStatus.NOT_FOUND),
 
+    CATEGORY_CONTAINING_SERVICE(1015, "Cannot delete category because it contain service!", HttpStatus.NOT_FOUND),
+
     QUIZ_NOT_FOUND(2000, "Quiz not found!", HttpStatus.NOT_FOUND),
     QUESTION_NOT_FOUND(2001, "Question not found!", HttpStatus.NOT_FOUND),
     CATEGORY_ALREADY_EXIST_QUIZ(2002, "This category already has a quiz", HttpStatus.BAD_REQUEST),
