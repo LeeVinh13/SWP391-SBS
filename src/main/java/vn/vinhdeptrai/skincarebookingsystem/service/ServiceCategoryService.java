@@ -10,7 +10,9 @@ import vn.vinhdeptrai.skincarebookingsystem.entity.ServiceCategory;
 import vn.vinhdeptrai.skincarebookingsystem.exception.AppException;
 import vn.vinhdeptrai.skincarebookingsystem.exception.ErrorCode;
 import vn.vinhdeptrai.skincarebookingsystem.mapper.ServiceCategoryMapper;
+import vn.vinhdeptrai.skincarebookingsystem.mapper.ServiceMapper;
 import vn.vinhdeptrai.skincarebookingsystem.repository.ServiceCategoryRepository;
+import vn.vinhdeptrai.skincarebookingsystem.repository.ServiceRepository;
 
 import java.util.List;
 import java.util.stream.Collectors;
@@ -21,6 +23,7 @@ import java.util.stream.Collectors;
 public class ServiceCategoryService {
     ServiceCategoryMapper serviceCategoryMapper;
     ServiceCategoryRepository serviceCategoryRepository;
+    ServiceRepository serviceRepository;
     public List<ServiceCategoryResponse> getAll() {
         List<ServiceCategory> serviceCategories = serviceCategoryRepository.findAll();
         if(serviceCategories.isEmpty()) {
@@ -50,6 +53,10 @@ public class ServiceCategoryService {
         ServiceCategory serviceCategory = serviceCategoryRepository.findById(id).orElseThrow(
                 () -> new AppException(ErrorCode.SERVICE_CATE_NOT_FOUND)
         );
+        List<vn.vinhdeptrai.skincarebookingsystem.entity.Service> services = serviceRepository.findByCategory(serviceCategory);
+        if(services != null && !services.isEmpty()) {
+            throw new AppException(ErrorCode.CATEGORY_CONTAINING_SERVICE);
+        }
         serviceCategoryRepository.deleteById(id);
     }
 }
