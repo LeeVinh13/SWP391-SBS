@@ -43,15 +43,15 @@ public class QuestionController {
     }
 
     @PostMapping("/createWithAnswers")
-    public ApiResponse<QuestionResponse> createWithAnswers(@RequestBody QuestionCreationRequest questionCreationRequest,
-                                                           @RequestBody List<AnswerRequest> answerRequestList) {
+    public ApiResponse<QuestionResponse> createWithAnswers(@RequestBody QuestionCreationWithAnswersRequest request) {
         return ApiResponse.<QuestionResponse>builder()
-                .result(questionService.createWithAnswers(questionCreationRequest, answerRequestList))
+                .result(questionService.createWithAnswers(request))
                 .build();
     }
 
     @PutMapping("/update/{questionId}")
-    ApiResponse<QuestionResponse> update(@PathVariable int questionId, @RequestBody QuestionUpdateRequest questionUpdateRequest) {
+    ApiResponse<QuestionResponse> update(@PathVariable int questionId,
+                                         @RequestBody QuestionUpdateRequest questionUpdateRequest) {
         return ApiResponse.<QuestionResponse>builder()
                 .result(questionService.update(questionId, questionUpdateRequest))
                 .build();

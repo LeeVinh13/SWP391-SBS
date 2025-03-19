@@ -18,6 +18,7 @@ import vn.vinhdeptrai.skincarebookingsystem.repository.QuestionRepository;
 
 import java.util.HashSet;
 import java.util.List;
+import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
 
@@ -52,14 +53,15 @@ public class QuestionService {
         return questionMapper.toQuestionResponse(questionRepository.save(question));
     }
 
-    public QuestionResponse createWithAnswers(QuestionCreationRequest questionCreationRequest,
-                                             List<AnswerRequest> answers) {
-        if (questionRepository.existsByQuestion(questionCreationRequest.getQuestion())) {
+    public QuestionResponse createWithAnswers(QuestionCreationWithAnswersRequest request) {
+        if (questionRepository.existsByQuestion(request.getQuestion())) {
             throw new AppException(ErrorCode.QUESTION_EXISTED);
         }
-        Question question = questionMapper.toQuestion(questionCreationRequest);
+        Question question = Question.builder()
+                .question(request.getQuestion())
+                .build();
 
-        for (AnswerRequest answerRequest : answers) {
+        for (AnswerRequest answerRequest : request.getAnswerRequestList()) {
             question.getAnswers().add(answerMapper.toAnswer(answerRequest));
         }
         return questionMapper.toQuestionResponse(questionRepository.save(question));
@@ -74,17 +76,18 @@ public class QuestionService {
         if (questionRepository.existsByQuestion(questionUpdateRequest.getQuestion())){
             throw new AppException(ErrorCode.QUESTION_EXISTED);
         }
-
-        Set<Answer> answers = new HashSet<>();
-        if (!questionUpdateRequest.getAnswerIds().isEmpty()) {
-            for(int id : questionUpdateRequest.getAnswerIds()){
-                answers.add(answerRepository.findById(id)
-                        .orElseThrow(() -> new AppException(ErrorCode.ANSWER_NOT_FOUND)));
-            }
-        }
-
         question.setQuestion(questionUpdateRequest.getQuestion());
-        question.setAnswers(answers);
+
+        for (Answer answerRequest : questionUpdateRequest.getAnswers()){
+            Answer answer = answerRepository.findById(answerRequest.getId())
+                    .orElseThrow(() -> new AppException(ErrorCode.ANSWER_NOT_FOUND));
+
+            if (answer.getQuestion().getId() != questionId){
+                throw new AppException(ErrorCode.ANSWER_NOT_FOUND);
+            }
+            answer.setAnswer(answerRequest.getAnswer());
+            answer.setScore(answerRequest.getScore());
+        }
         return questionMapper.toQuestionResponse(questionRepository.save(question));
     }
 
