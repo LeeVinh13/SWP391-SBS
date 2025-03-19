@@ -44,6 +44,14 @@ public class QuizService {
         return quizMapper.toQuizResponse(quiz);
     }
 
+    public QuizResponse getQuizByCategoryID(int categoryId){
+        ServiceCategory category = serviceCategoryRepository.findById(categoryId)
+                .orElseThrow(() -> new AppException(ErrorCode.SERVICE_CATE_NOT_FOUND));
+        Quiz quiz = quizRepository.findByCategory_Id(categoryId)
+                .orElseThrow(() -> new AppException(ErrorCode.QUIZ_NOT_FOUND));
+        return quizMapper.toQuizResponse(quiz);
+    }
+
     @PreAuthorize("hasRole('ADMIN')")
     public QuizResponse create(QuizCreationRequest request) {
         ServiceCategory serviceCategory = serviceCategoryRepository.findById(request.getCate_id())
