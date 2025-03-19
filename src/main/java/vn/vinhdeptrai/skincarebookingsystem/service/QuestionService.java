@@ -9,12 +9,14 @@ import vn.vinhdeptrai.skincarebookingsystem.dto.request.*;
 import vn.vinhdeptrai.skincarebookingsystem.dto.response.QuestionResponse;
 import vn.vinhdeptrai.skincarebookingsystem.entity.Answer;
 import vn.vinhdeptrai.skincarebookingsystem.entity.Question;
+import vn.vinhdeptrai.skincarebookingsystem.entity.Quiz;
 import vn.vinhdeptrai.skincarebookingsystem.exception.AppException;
 import vn.vinhdeptrai.skincarebookingsystem.exception.ErrorCode;
 import vn.vinhdeptrai.skincarebookingsystem.mapper.AnswerMapper;
 import vn.vinhdeptrai.skincarebookingsystem.mapper.QuestionMapper;
 import vn.vinhdeptrai.skincarebookingsystem.repository.AnswerRepository;
 import vn.vinhdeptrai.skincarebookingsystem.repository.QuestionRepository;
+import vn.vinhdeptrai.skincarebookingsystem.repository.QuizRepository;
 
 import java.util.HashSet;
 import java.util.List;
@@ -30,6 +32,7 @@ public class QuestionService {
     QuestionMapper questionMapper;
     AnswerRepository answerRepository;
     private final AnswerMapper answerMapper;
+    private final QuizRepository quizRepository;
 
     public List<QuestionResponse> getQuestionList() {
         List<Question> questionList = questionRepository.findAll();
@@ -53,14 +56,17 @@ public class QuestionService {
         return questionMapper.toQuestionResponse(questionRepository.save(question));
     }
 
-    public QuestionResponse createWithAnswers(QuestionCreationWithAnswersRequest request) {
+    public QuestionResponse createWithAnswers(QuestionCreationWithAnswersRequest request, int quizID) {
+        Quiz quiz = quizRepository.findById(quizID)
+                .orElseThrow(() -> new AppException(ErrorCode.QUIZ_NOT_FOUND));
+
         if (questionRepository.existsByQuestion(request.getQuestion())) {
             throw new AppException(ErrorCode.QUESTION_EXISTED);
         }
         Question question = Question.builder()
                 .question(request.getQuestion())
                 .build();
-
+        question.getQuizzes().add(quiz);
         for (AnswerRequest answerRequest : request.getAnswerRequestList()) {
             question.getAnswers().add(answerMapper.toAnswer(answerRequest));
         }
