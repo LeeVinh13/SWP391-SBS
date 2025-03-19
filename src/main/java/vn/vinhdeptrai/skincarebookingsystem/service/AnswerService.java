@@ -39,7 +39,6 @@ public class AnswerService {
         return answerMapper.toAnswerResponse(answer);
     }
 
-    @PreAuthorize("hasRole('ADMIN')")
     public AnswerResponse create(AnswerRequest request) {
         //không check existed answer vì có thể có nhiều câu hỏi cần trả lời giống nhau cùng trọng số
         //Ex: câu trả lời về thời gian hoặc mức độ
@@ -73,7 +72,6 @@ public class AnswerService {
         return answerList;
     }
 
-    @PreAuthorize("hasRole('ADMIN')")
     public AnswerResponse update(int answerId, AnswerRequest request) {
         //chỉ update nội dung câu trả lời và điểm vì ở question sẽ có API add hoặc remove answer
 
@@ -85,7 +83,6 @@ public class AnswerService {
         return answerMapper.toAnswerResponse(answerRepository.save(answer));
     }
 
-    @PreAuthorize("hasRole('ADMIN')")
     public void delete(int answerId) {
         Answer answer = answerRepository.findById(answerId)
                 .orElseThrow(() -> new AppException(ErrorCode.ANSWER_NOT_FOUND));

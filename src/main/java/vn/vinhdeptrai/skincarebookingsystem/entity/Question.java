@@ -4,6 +4,7 @@ package vn.vinhdeptrai.skincarebookingsystem.entity;
 import jakarta.persistence.*;
 import lombok.*;
 import lombok.experimental.FieldDefaults;
+import org.hibernate.annotations.Cascade;
 
 import java.util.Set;
 
@@ -23,6 +24,7 @@ public class Question {
     String question;
 
     @OneToMany(mappedBy = "question", cascade = CascadeType.ALL, orphanRemoval = true)
+    @Cascade(org.hibernate.annotations.CascadeType.ALL)
     Set<Answer> answers; //xóa question là xóa luôn câu trả lời
 
     @ManyToMany(mappedBy = "questions")

@@ -35,13 +35,6 @@ public class QuestionController {
                 .build();
     }
 
-    @PostMapping("/create")
-    public ApiResponse<QuestionResponse> create(@RequestBody QuestionCreationRequest request) {
-        return ApiResponse.<QuestionResponse>builder()
-                .result(questionService.create(request))
-                .build();
-    }
-
     @PostMapping("/createWithAnswers/{quizID}")
     public ApiResponse<QuestionResponse> createWithAnswers(@RequestBody QuestionCreationWithAnswersRequest request,
                                                            @PathVariable int quizID) {
