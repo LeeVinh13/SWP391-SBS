@@ -49,8 +49,9 @@ public class AnswerController {
                 .build();
     }
 
-    @PostMapping("/create/{questionID}")
-    public ApiResponse<List<AnswerResponse>> createListAnswers(@RequestBody List<AnswerRequest> request, @PathVariable int questionID) {
+    @PostMapping("/createListAnswers/{questionID}")
+    public ApiResponse<List<AnswerResponse>> createListAnswers(@RequestBody List<AnswerRequest> request
+            , @PathVariable int questionID) {
         return ApiResponse.<List<AnswerResponse>>builder()
                 .result(answerService.createListAnswers(request, questionID))
                 .build();

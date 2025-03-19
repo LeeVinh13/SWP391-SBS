@@ -11,6 +11,7 @@ import vn.vinhdeptrai.skincarebookingsystem.entity.Answer;
 import vn.vinhdeptrai.skincarebookingsystem.entity.Question;
 import vn.vinhdeptrai.skincarebookingsystem.exception.AppException;
 import vn.vinhdeptrai.skincarebookingsystem.exception.ErrorCode;
+import vn.vinhdeptrai.skincarebookingsystem.mapper.AnswerMapper;
 import vn.vinhdeptrai.skincarebookingsystem.mapper.QuestionMapper;
 import vn.vinhdeptrai.skincarebookingsystem.repository.AnswerRepository;
 import vn.vinhdeptrai.skincarebookingsystem.repository.QuestionRepository;
@@ -27,6 +28,7 @@ public class QuestionService {
     QuestionRepository questionRepository;
     QuestionMapper questionMapper;
     AnswerRepository answerRepository;
+    private final AnswerMapper answerMapper;
 
     public List<QuestionResponse> getQuestionList() {
         List<Question> questionList = questionRepository.findAll();
@@ -47,6 +49,19 @@ public class QuestionService {
 
         Question question = questionMapper.toQuestion(request);
 
+        return questionMapper.toQuestionResponse(questionRepository.save(question));
+    }
+
+    public QuestionResponse createWithAnswers(QuestionCreationRequest questionCreationRequest,
+                                             List<AnswerRequest> answers) {
+        if (questionRepository.existsByQuestion(questionCreationRequest.getQuestion())) {
+            throw new AppException(ErrorCode.QUESTION_EXISTED);
+        }
+        Question question = questionMapper.toQuestion(questionCreationRequest);
+
+        for (AnswerRequest answerRequest : answers) {
+            question.getAnswers().add(answerMapper.toAnswer(answerRequest));
+        }
         return questionMapper.toQuestionResponse(questionRepository.save(question));
     }
 
