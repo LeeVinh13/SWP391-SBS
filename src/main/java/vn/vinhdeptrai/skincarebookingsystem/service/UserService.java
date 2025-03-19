@@ -58,11 +58,13 @@ public class UserService {
 //        if (userUpdateRequest.getPassword() != null && !userUpdateRequest.getPassword().isEmpty()) {
 //            user.setPassword(passwordEncoder.encode(userUpdateRequest.getPassword()));
 //        }
-        Set<Role> roles = userUpdateRequest.getRole().stream()
-                .map(roleName -> roleRepository.findByName(roleName)
-                .orElseThrow(() -> new AppException(ErrorCode.ROLE_NOT_FOUND)))
-                .collect(Collectors.toSet());
-        user.setRole((roles));
+        if(userUpdateRequest.getRole() != null){
+            Set<Role> roles = userUpdateRequest.getRole().stream()
+                    .map(roleName -> roleRepository.findByName(roleName)
+                            .orElseThrow(() -> new AppException(ErrorCode.ROLE_NOT_FOUND)))
+                    .collect(Collectors.toSet());
+            user.setRole((roles));
+        }
         return userMapper.toUserResponse(userRepository.save(user));
     }
 //    @PreAuthorize("hasRole('ADMIN')")
