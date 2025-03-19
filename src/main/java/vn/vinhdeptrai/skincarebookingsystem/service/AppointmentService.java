@@ -122,9 +122,14 @@ public class AppointmentService {
         appointmentRepository.save(appointment);
     }
 
-    public void updateStatus(AppointmentStatus status, int appointmentId) {
+    public void updateStatus(AppointmentStatus appointmentStatus, PaymentStatus paymentStatus, int appointmentId) {
         Appointment appointment = getAppointmentById(appointmentId);
-        appointment.setAppointmentStatus(status);
+        if (appointmentStatus != null) {
+            appointment.setAppointmentStatus(appointmentStatus);
+        }
+        if (paymentStatus != null) {
+            appointment.setPaymentStatus(paymentStatus);
+        }
         appointmentRepository.save(appointment);
     }
 
@@ -195,7 +200,22 @@ public class AppointmentService {
         appointment.setDepositAmount(deposit);
         appointment.setRemainingAmount(remaining);
     }
-
+    //tự động xóa appointment bị cancel lúc 00:00
+    @Scheduled(fixedRate = 300000)
+    private void handlePendingAppointments() {
+        LocalDateTime fifteenMinutesAgo = LocalDateTime.now().minusMinutes(15);
+        List<Appointment> pendingAppointments = appointmentRepository.findByAppointmentStatusAndCreateAtBefore(AppointmentStatus.PENDING, fifteenMinutesAgo);
+        //chi
+        if (!pendingAppointments.isEmpty()) {
+            for (Appointment appointment : pendingAppointments) {
+                appointment.setCancelAt(LocalDateTime.now());
+                updateStatus(AppointmentStatus.REJECTED, PaymentStatus.CANCELLED, appointment.getId());
+                updateSlotDetailStatus(appointment.getSlotDetail(), SlotStatus.AVAILABLE);
+                appointmentRepository.save(appointment);
+            }
+        }
+    }
+    //tự động xóa appointment bị cancel lúc 00:00
     @Scheduled(cron = "0 0 0 * * *")
     private void cleanupCancelledAppointments() {
         LocalDateTime oneDayAgo = LocalDateTime.now().minusDays(1);

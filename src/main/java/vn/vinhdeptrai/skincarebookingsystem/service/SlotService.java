@@ -31,12 +31,11 @@ public class SlotService {
     TherapistRepository therapistRepository;
     SlotDetailRepository slotDetailRepository;
     List<LocalTime> WORKING_HOURS = List.of(
-            LocalTime.of(9, 0),
-            LocalTime.of(10, 0), LocalTime.of(11, 0),
-            LocalTime.of(12, 0), LocalTime.of(13, 0),
-            LocalTime.of(14, 0), LocalTime.of(15, 0),
-            LocalTime.of(16, 0), LocalTime.of(17, 0),
-            LocalTime.of(18, 0)
+            LocalTime.of(9, 0), LocalTime.of(10, 0),
+            LocalTime.of(11, 0), LocalTime.of(12, 0),
+            LocalTime.of(13, 0), LocalTime.of(14, 0),
+            LocalTime.of(15, 0), LocalTime.of(16, 0),
+            LocalTime.of(17, 0), LocalTime.of(18, 0)
     );
 
     public List<SlotResponse> getAllSlots() {
@@ -75,7 +74,7 @@ public class SlotService {
                     return slot;
                 })
                 .filter(slot -> !slot.getSlotDetails().isEmpty())
-                .collect(Collectors.toList());
+                .toList();
         return availableSlots.stream().map(slot -> slotMapper.toSlotResponse(slot)).collect(Collectors.toList());
 
     }
@@ -115,7 +114,24 @@ public class SlotService {
 
         return slots.stream().map(slot -> slotMapper.toSlotResponse(slot)).collect(Collectors.toList());
     }
+    public List<SlotResponse> generateSlotsForDateRange(LocalDate startDate, LocalDate endTime, Set<Integer> therapistIds) {
 
+        List<SlotResponse> allSlots = new ArrayList<>();
+        SlotRequest slotRequest = SlotRequest.builder()
+                .therapistIds(therapistIds)
+                .build();
+        startDate.datesUntil(endTime.plusDays(1)).forEach(date -> {
+            slotRequest.setDate(date);
+            List<SlotResponse> slotsForDay = generateSlotsForDay(slotRequest);
+            allSlots.addAll(slotsForDay);
+        });
+        return allSlots;
+    }
+    public void delete(int slotId) {
+        Slot slot = slotRepository.findById(slotId).orElseThrow(() ->
+                new AppException(ErrorCode.SLOT_NOT_FOUND));
+        slotRepository.delete(slot);
+    }
     private List<SlotDetail> createSlotDetails(List<Slot> slots, List<Therapist> therapists) {
         List<SlotDetail> slotDetails = new ArrayList<>();
         for (Slot slot : slots) {
@@ -136,21 +152,5 @@ public class SlotService {
                 slotDetail -> slotDetail.getTherapist().getId() == therapistId
         ).collect(Collectors.toSet());
     }
-    public List<SlotResponse> generateSlotsForDateRange(LocalDate startDate, LocalDate endTime, Set<Integer> therapistIds) {
-        List<SlotResponse> allSlots = new ArrayList<>();
-        SlotRequest slotRequest = SlotRequest.builder()
-                .therapistIds(therapistIds)
-                .build();
-        startDate.datesUntil(endTime.plusDays(1)).forEach(date -> {
-            slotRequest.setDate(date);
-            List<SlotResponse> slotsForDay = generateSlotsForDay(slotRequest);
-            allSlots.addAll(slotsForDay);
-        });
-        return allSlots;
-    }
-    public void delete(int slotId) {
-        Slot slot = slotRepository.findById(slotId).orElseThrow(() ->
-                new AppException(ErrorCode.SLOT_NOT_FOUND));
-        slotRepository.delete(slot);
-    }
+
 }

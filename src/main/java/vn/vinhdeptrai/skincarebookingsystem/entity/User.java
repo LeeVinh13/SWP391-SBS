@@ -27,6 +27,8 @@ public class User {
     String email;
     String fullname;
     String phone;
+    //bảng N-N khi xóa user tự động xóa data trong bảng, ko cần cascade
+    //@ManyToMany(cascade = CascadeType.ALL)
     @ManyToMany
     @JoinTable(
             name="user_role",
