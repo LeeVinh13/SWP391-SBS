@@ -37,10 +37,8 @@ public class AppointmentService {
 
     public List<AppointmentResponse> myUpcomingAppointment() {
         User user = getUser();
-        List<AppointmentResponse> appointments = appointmentRepository.findByUserAndAppointmentStatusIn(
-                        user,
-                        List.of(AppointmentStatus.APPROVED, AppointmentStatus.REJECTED)
-                ).stream()
+        List<AppointmentResponse> appointments = appointmentRepository.findByUserAndPaymentStatus(user, PaymentStatus.PARTIALLY_PAID)
+                .stream()
                 .filter(apt -> isUpcomingAppointment(apt.getSlotDetail().getSlot().getDate()))
                 .map(apt -> {
                     return appointmentMapper.toAppointmentResponse(apt);
@@ -55,13 +53,11 @@ public class AppointmentService {
 
     public List<AppointmentResponse> myHistoricalAppointment() {
         User user = getUser();
-        List<AppointmentResponse> appointments = appointmentRepository.findByUserAndAppointmentStatusIn(
-                        user,
-                        List.of(AppointmentStatus.COMPLETED)
-                ).stream()
+        List<AppointmentResponse> appointments = appointmentRepository.findByUserAndPaymentStatus(user, PaymentStatus.PAID).stream()
+                .filter(apt -> !isUpcomingAppointment(apt.getSlotDetail().getSlot().getDate()))
                 .map(apt -> {
-                    return appointmentMapper.toAppointmentResponse(apt);
-                })
+                        return appointmentMapper.toAppointmentResponse(apt)
+                    ;})
                 .toList();
         if (appointments.isEmpty()) {
             throw new AppException(ErrorCode.APPOINTMENT_NOT_FOUND);
@@ -99,14 +95,10 @@ public class AppointmentService {
 
     public AppointmentResponse update(AppointmentRequest appointmentRequest, int appointmentId) {
         Appointment appointment = getAppointmentById(appointmentId);
-//        vn.vinhdeptrai.skincarebookingsystem.entity.Service newService = getService(appointmentRequest.getServiceId());
         SlotDetail newSlotDetail = getAvailableSlotDetail(appointmentRequest.getSlotId(), appointmentRequest.getTherapistId());
         updateSlotDetailStatus(appointment.getSlotDetail(), SlotStatus.AVAILABLE);
-        appointment.setNote(appointmentRequest.getNote());
-        appointment.setUpdateAt(LocalDateTime.now());
-//        appointment.setService(newService);
         appointment.setSlotDetail(newSlotDetail);
-//        calculateAndSetAmount(appointment, newService);
+        appointment.setUpdateAt(LocalDateTime.now());
         return appointmentMapper.toAppointmentResponse(appointmentRepository.save(appointment));
     }
 
@@ -116,8 +108,7 @@ public class AppointmentService {
             throw new AppException(ErrorCode.APPOINTMENT_CANCELLED);
         }
         appointment.setCancelAt(LocalDateTime.now());
-        appointment.setAppointmentStatus(AppointmentStatus.REJECTED);
-        appointment.setPaymentStatus(PaymentStatus.CANCELLED);
+        updateStatus(appointment.getAppointmentStatus(), appointment.getPaymentStatus(), appointmentId);
         updateSlotDetailStatus(appointment.getSlotDetail(), SlotStatus.AVAILABLE);
         appointmentRepository.save(appointment);
     }
@@ -200,7 +191,7 @@ public class AppointmentService {
         appointment.setDepositAmount(deposit);
         appointment.setRemainingAmount(remaining);
     }
-    //tự động xóa appointment bị cancel lúc 00:00
+    //tự động cập nhật appointment khi đang pending quá 15p định kỳ 5p
     @Scheduled(fixedRate = 300000)
     private void handlePendingAppointments() {
         LocalDateTime fifteenMinutesAgo = LocalDateTime.now().minusMinutes(15);
