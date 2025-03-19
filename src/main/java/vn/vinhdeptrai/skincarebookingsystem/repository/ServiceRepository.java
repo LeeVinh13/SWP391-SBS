@@ -10,5 +10,7 @@ import java.util.List;
 @Repository
 
 public interface ServiceRepository extends JpaRepository<Service, Integer> {
+    List<vn.vinhdeptrai.skincarebookingsystem.entity.Service> findByCategory_Signature(boolean categorySignature);
+
     List<Service> findByCategory(ServiceCategory category);
 }

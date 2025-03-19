@@ -14,4 +14,6 @@ import java.util.Set;
 public class ServiceCategoryResponse {
     int id;
     String name;
+    String description;
+    boolean signature;
  }
