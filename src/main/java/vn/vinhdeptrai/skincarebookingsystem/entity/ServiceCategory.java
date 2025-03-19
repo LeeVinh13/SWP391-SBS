@@ -20,8 +20,6 @@ public class ServiceCategory{
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     int id;
     String name;
-    String description;
-    boolean signature;
     @OneToMany(mappedBy = "category")
     Set<Service> services;
 
