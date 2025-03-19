@@ -55,11 +55,13 @@ public class UserService {
     public UserResponse update(int id, UserUpdateRequest userUpdateRequest){
         User user = userRepository.findById(id).orElseThrow(() -> new AppException(ErrorCode.USER_NOT_FOUND));
         userMapper.updateUser(user, userUpdateRequest);
-        if (userUpdateRequest.getPassword() != null && !userUpdateRequest.getPassword().isEmpty()) {
-            user.setPassword(passwordEncoder.encode(userUpdateRequest.getPassword()));
-        }
-        Set<Role> roles = userUpdateRequest.getRole().stream().map(roleName -> roleRepository.findByName(roleName)
-                .orElseThrow(() -> new AppException(ErrorCode.ROLE_NOT_FOUND))).collect(Collectors.toSet());
+//        if (userUpdateRequest.getPassword() != null && !userUpdateRequest.getPassword().isEmpty()) {
+//            user.setPassword(passwordEncoder.encode(userUpdateRequest.getPassword()));
+//        }
+        Set<Role> roles = userUpdateRequest.getRole().stream()
+                .map(roleName -> roleRepository.findByName(roleName)
+                .orElseThrow(() -> new AppException(ErrorCode.ROLE_NOT_FOUND)))
+                .collect(Collectors.toSet());
         user.setRole((roles));
         return userMapper.toUserResponse(userRepository.save(user));
     }
