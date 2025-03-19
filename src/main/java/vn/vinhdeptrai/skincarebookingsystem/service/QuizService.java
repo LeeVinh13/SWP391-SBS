@@ -10,12 +10,14 @@ import vn.vinhdeptrai.skincarebookingsystem.dto.request.QuizCreationRequest;
 import vn.vinhdeptrai.skincarebookingsystem.dto.request.QuizUpdateRequest;
 import vn.vinhdeptrai.skincarebookingsystem.dto.request.RemoveQuestionsFromQuizRequest;
 import vn.vinhdeptrai.skincarebookingsystem.dto.response.QuizResponse;
+import vn.vinhdeptrai.skincarebookingsystem.entity.Answer;
 import vn.vinhdeptrai.skincarebookingsystem.entity.Question;
 import vn.vinhdeptrai.skincarebookingsystem.entity.Quiz;
 import vn.vinhdeptrai.skincarebookingsystem.entity.ServiceCategory;
 import vn.vinhdeptrai.skincarebookingsystem.exception.AppException;
 import vn.vinhdeptrai.skincarebookingsystem.exception.ErrorCode;
 import vn.vinhdeptrai.skincarebookingsystem.mapper.QuizMapper;
+import vn.vinhdeptrai.skincarebookingsystem.repository.AnswerRepository;
 import vn.vinhdeptrai.skincarebookingsystem.repository.QuestionRepository;
 import vn.vinhdeptrai.skincarebookingsystem.repository.QuizRepository;
 import vn.vinhdeptrai.skincarebookingsystem.repository.ServiceCategoryRepository;
@@ -33,6 +35,7 @@ public class QuizService {
     QuestionRepository questionRepository;
     QuizMapper quizMapper;
     ServiceCategoryRepository serviceCategoryRepository;
+    private final AnswerRepository answerRepository;
 
     public List<QuizResponse> getQuizList() {
         List<Quiz> quizList = quizRepository.findAll();
@@ -95,6 +98,14 @@ public class QuizService {
     public void delete(int quizId) {
         Quiz quiz = quizRepository.findById(quizId)
                 .orElseThrow(() -> new AppException(ErrorCode.QUIZ_NOT_FOUND));
+        if (!quiz.getQuestions().isEmpty()) {
+            for (Question question : quiz.getQuestions()) {
+                if (!question.getAnswers().isEmpty()) {
+                    answerRepository.deleteAll(question.getAnswers());
+                }
+                questionRepository.delete(question);
+            }
+        }
         quizRepository.delete(quiz);
     }
 

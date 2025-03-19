@@ -101,6 +101,10 @@ public class QuestionService {
     public void delete(int questionId) {
         Question question = questionRepository.findById(questionId)
                 .orElseThrow(() -> new AppException(ErrorCode.QUESTION_NOT_FOUND));
+
+        if (!question.getAnswers().isEmpty()) {
+            answerRepository.deleteAll(question.getAnswers());
+        }
         questionRepository.delete(question);
     }
 
