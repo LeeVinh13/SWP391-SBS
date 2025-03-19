@@ -31,7 +31,7 @@ public class QuizController {
                 .build();
     }
 
-    @GetMapping("/{categoryID}")
+    @GetMapping("/byCategory/{categoryID}")
     public ApiResponse<QuizResponse> getQuizByCategoryID(@PathVariable int categoryID) {
         return ApiResponse.<QuizResponse>builder()
                 .result(quizService.getQuizByCategoryID(categoryID))
