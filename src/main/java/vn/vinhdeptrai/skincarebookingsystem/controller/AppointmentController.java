@@ -8,6 +8,9 @@ import org.springframework.web.bind.annotation.*;
 import vn.vinhdeptrai.skincarebookingsystem.dto.request.AppointmentRequest;
 import vn.vinhdeptrai.skincarebookingsystem.dto.response.ApiResponse;
 import vn.vinhdeptrai.skincarebookingsystem.dto.response.AppointmentResponse;
+import vn.vinhdeptrai.skincarebookingsystem.enums.AppointmentStatus;
+import vn.vinhdeptrai.skincarebookingsystem.enums.PaymentStatus;
+import vn.vinhdeptrai.skincarebookingsystem.enums.SlotStatus;
 import vn.vinhdeptrai.skincarebookingsystem.service.AppointmentService;
 
 import java.util.List;
@@ -52,6 +55,14 @@ public class AppointmentController {
     public ApiResponse<AppointmentResponse> update(@RequestBody AppointmentRequest appointmentRequest, @PathVariable int id) {
         return ApiResponse.<AppointmentResponse>builder()
                 .result(appointmentService.update(appointmentRequest,id))
+                .build();
+    }
+    @PutMapping("/update-status/{id}")
+    public ApiResponse<AppointmentResponse> updateStatus(@PathVariable int id,
+                                                         @RequestParam(value ="aptStatus", required = false) AppointmentStatus appointmentStatus,
+                                                         @RequestParam(value ="ptStatus", required = false) PaymentStatus paymentStatus) {
+        appointmentService.updateStatus(appointmentStatus,paymentStatus,id);
+        return ApiResponse.<AppointmentResponse>builder()
                 .build();
     }
     @PutMapping("/cancel/{id}")

@@ -17,4 +17,6 @@ public interface AppointmentRepository extends JpaRepository<Appointment, Intege
     Optional<Appointment> findByTxnRef(String txnRef);
     List<Appointment> findByAppointmentStatusAndCancelAtBefore(AppointmentStatus appointmentStatus, LocalDateTime cancelAtBefore);
     List<Appointment> findByUserAndAppointmentStatusIn(User user, List<AppointmentStatus> appointmentStatuses);
+
+    List<Appointment> findByAppointmentStatusAndCreateAtBefore(AppointmentStatus appointmentStatus, LocalDateTime createAtBefore);
 }
