@@ -10,5 +10,7 @@ import lombok.experimental.FieldDefaults;
 @FieldDefaults(level = AccessLevel.PRIVATE)
 public class ServiceCategoryRequest {
     String name;
+    String description;
+    boolean signature;
 
 }
