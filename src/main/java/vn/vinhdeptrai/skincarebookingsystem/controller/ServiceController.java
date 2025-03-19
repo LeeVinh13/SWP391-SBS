@@ -34,12 +34,7 @@ public class ServiceController {
                 .result(service.getById(id))
                 .build();
     }
-    @GetMapping("/signature")
-    public ApiResponse<List<ServiceResponse>> getSignatureService() {
-        return ApiResponse.<List<ServiceResponse>>builder()
-                .result(service.getSignatureService())
-                .build();
-    }
+
     @PostMapping(value="/create", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     public ApiResponse<ServiceResponse> create(@RequestPart("service") ServiceRequest serviceRequest,
                                                @RequestPart(value="thumbnail", required = false) MultipartFile thumbnail) throws IOException {
