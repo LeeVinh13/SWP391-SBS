@@ -3,7 +3,6 @@ package vn.vinhdeptrai.skincarebookingsystem.service;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
-import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import vn.vinhdeptrai.skincarebookingsystem.dto.request.AddQuestionsToQuizRequest;
@@ -11,7 +10,6 @@ import vn.vinhdeptrai.skincarebookingsystem.dto.request.QuizCreationRequest;
 import vn.vinhdeptrai.skincarebookingsystem.dto.request.QuizUpdateRequest;
 import vn.vinhdeptrai.skincarebookingsystem.dto.request.RemoveQuestionsFromQuizRequest;
 import vn.vinhdeptrai.skincarebookingsystem.dto.response.QuizResponse;
-import vn.vinhdeptrai.skincarebookingsystem.entity.Answer;
 import vn.vinhdeptrai.skincarebookingsystem.entity.Question;
 import vn.vinhdeptrai.skincarebookingsystem.entity.Quiz;
 import vn.vinhdeptrai.skincarebookingsystem.entity.ServiceCategory;
@@ -33,7 +31,6 @@ public class QuizService {
     QuestionRepository questionRepository;
     QuizMapper quizMapper;
     ServiceCategoryRepository serviceCategoryRepository;
-    private final AnswerRepository answerRepository;
     private final QuestionService questionService;
     private final ServiceRecommendationRepository serviceRecommendationRepository;
 
@@ -48,7 +45,7 @@ public class QuizService {
     }
 
     public QuizResponse getQuizByCategoryID(int categoryId){
-        ServiceCategory category = serviceCategoryRepository.findById(categoryId)
+        serviceCategoryRepository.findById(categoryId)
                 .orElseThrow(() -> new AppException(ErrorCode.SERVICE_CATE_NOT_FOUND));
         Quiz quiz = quizRepository.findByCategory_Id(categoryId)
                 .orElseThrow(() -> new AppException(ErrorCode.QUIZ_NOT_FOUND));
@@ -66,6 +63,7 @@ public class QuizService {
         Quiz quiz = Quiz.builder()
                 .category(serviceCategory)
                 .title(request.getTitle())
+                .questions(new HashSet<>())
                 .build();
         quizRepository.save(quiz);
         return quizMapper.toQuizResponse(quiz);

@@ -3,7 +3,6 @@ package vn.vinhdeptrai.skincarebookingsystem.service;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
-import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Service;
 import vn.vinhdeptrai.skincarebookingsystem.dto.request.AnswerRequest;
 import vn.vinhdeptrai.skincarebookingsystem.dto.response.AnswerResponse;
@@ -14,7 +13,6 @@ import vn.vinhdeptrai.skincarebookingsystem.exception.ErrorCode;
 import vn.vinhdeptrai.skincarebookingsystem.mapper.AnswerMapper;
 import vn.vinhdeptrai.skincarebookingsystem.repository.AnswerRepository;
 import vn.vinhdeptrai.skincarebookingsystem.repository.QuestionRepository;
-import vn.vinhdeptrai.skincarebookingsystem.repository.QuizRepository;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -27,8 +25,6 @@ public class AnswerService {
     private final AnswerRepository answerRepository;
     AnswerMapper answerMapper;
     private final QuestionRepository questionRepository;
-    private final QuizRepository quizRepository;
-
     public List<AnswerResponse> getAnswerList() {
         List<Answer> answerList = answerRepository.findAll();
         return answerList.stream().map(answerMapper::toAnswerResponse).collect(Collectors.toList());

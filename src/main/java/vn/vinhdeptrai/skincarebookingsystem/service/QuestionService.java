@@ -53,17 +53,13 @@ public class QuestionService {
         }
 
         Question question = Question.builder()
+                .quizzes(new HashSet<>())
                 .question(request.getQuestion())
+                .answers(new HashSet<>())
                 .build();
 
-        if (question.getQuizzes() == null) {
-            question.setQuizzes(new HashSet<>());
-        }
         question.getQuizzes().add(quiz);
-
-        if (question.getAnswers() == null) {
-            question.setAnswers(new HashSet<>());
-        }
+        quiz.getQuestions().add(question);
 
         if (request.getAnswerRequestList() != null) {
             for (AnswerRequest answerRequest : request.getAnswerRequestList()) {
