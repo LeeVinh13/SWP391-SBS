@@ -3,6 +3,7 @@ package vn.vinhdeptrai.skincarebookingsystem.repository;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 import vn.vinhdeptrai.skincarebookingsystem.entity.Appointment;
+import vn.vinhdeptrai.skincarebookingsystem.entity.SlotDetail;
 import vn.vinhdeptrai.skincarebookingsystem.entity.User;
 import vn.vinhdeptrai.skincarebookingsystem.enums.AppointmentStatus;
 import vn.vinhdeptrai.skincarebookingsystem.enums.PaymentStatus;
@@ -19,4 +20,5 @@ public interface AppointmentRepository extends JpaRepository<Appointment, Intege
     List<Appointment> findByAppointmentStatusAndCancelAtBefore(AppointmentStatus appointmentStatus, LocalDateTime cancelAtBefore);
     List<Appointment> findByUserAndPaymentStatus(User user, PaymentStatus paymentStatus);
     List<Appointment> findByAppointmentStatusAndCreateAtBefore(AppointmentStatus appointmentStatus, LocalDateTime createAtBefore);
+
 }
