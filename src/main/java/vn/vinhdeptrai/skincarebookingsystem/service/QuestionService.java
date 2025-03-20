@@ -3,22 +3,23 @@ package vn.vinhdeptrai.skincarebookingsystem.service;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
-import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import vn.vinhdeptrai.skincarebookingsystem.dto.request.*;
 import vn.vinhdeptrai.skincarebookingsystem.dto.response.QuestionResponse;
 import vn.vinhdeptrai.skincarebookingsystem.entity.Answer;
 import vn.vinhdeptrai.skincarebookingsystem.entity.Question;
+import vn.vinhdeptrai.skincarebookingsystem.entity.Quiz;
 import vn.vinhdeptrai.skincarebookingsystem.exception.AppException;
 import vn.vinhdeptrai.skincarebookingsystem.exception.ErrorCode;
 import vn.vinhdeptrai.skincarebookingsystem.mapper.AnswerMapper;
 import vn.vinhdeptrai.skincarebookingsystem.mapper.QuestionMapper;
 import vn.vinhdeptrai.skincarebookingsystem.repository.AnswerRepository;
 import vn.vinhdeptrai.skincarebookingsystem.repository.QuestionRepository;
+import vn.vinhdeptrai.skincarebookingsystem.repository.QuizRepository;
 
 import java.util.HashSet;
 import java.util.List;
-import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
 
@@ -30,6 +31,7 @@ public class QuestionService {
     QuestionMapper questionMapper;
     AnswerRepository answerRepository;
     private final AnswerMapper answerMapper;
+    private final QuizRepository quizRepository;
 
     public List<QuestionResponse> getQuestionList() {
         List<Question> questionList = questionRepository.findAll();
@@ -41,64 +43,74 @@ public class QuestionService {
         return questionMapper.toQuestionResponse(question);
     }
 
-    @PreAuthorize("hasRole('ADMIN')")
-    public QuestionResponse create(QuestionCreationRequest request) {
+    @Transactional
+    public QuestionResponse createWithAnswers(QuestionCreationWithAnswersRequest request, int quizID) {
+        Quiz quiz = quizRepository.findById(quizID)
+                .orElseThrow(() -> new AppException(ErrorCode.QUIZ_NOT_FOUND));
 
         if (questionRepository.existsByQuestion(request.getQuestion())) {
             throw new AppException(ErrorCode.QUESTION_EXISTED);
         }
 
-        Question question = questionMapper.toQuestion(request);
-
-        return questionMapper.toQuestionResponse(questionRepository.save(question));
-    }
-
-    public QuestionResponse createWithAnswers(QuestionCreationWithAnswersRequest request) {
-        if (questionRepository.existsByQuestion(request.getQuestion())) {
-            throw new AppException(ErrorCode.QUESTION_EXISTED);
-        }
         Question question = Question.builder()
+                .quizzes(new HashSet<>())
                 .question(request.getQuestion())
+                .answers(new HashSet<>())
                 .build();
 
-        for (AnswerRequest answerRequest : request.getAnswerRequestList()) {
-            question.getAnswers().add(answerMapper.toAnswer(answerRequest));
+        question.getQuizzes().add(quiz);
+        quiz.getQuestions().add(question);
+
+        if (request.getAnswerRequestList() != null) {
+            for (AnswerRequest answerRequest : request.getAnswerRequestList()) {
+                Answer answer = answerMapper.toAnswer(answerRequest);
+                answer.setQuestion(question);
+                question.getAnswers().add(answer);
+            }
         }
+
         return questionMapper.toQuestionResponse(questionRepository.save(question));
     }
 
-    @PreAuthorize("hasRole('ADMIN')")
+    @Transactional
     public QuestionResponse update(int questionId, QuestionUpdateRequest questionUpdateRequest) {
-        //chỉ update nội dung câu hỏi và các answer vì ở quiz sẽ có API add hoặc remove question
 
         Question question = questionRepository.findById(questionId)
                 .orElseThrow(() -> new AppException(ErrorCode.QUESTION_NOT_FOUND));
-        if (questionRepository.existsByQuestion(questionUpdateRequest.getQuestion())){
-            throw new AppException(ErrorCode.QUESTION_EXISTED);
-        }
+
         question.setQuestion(questionUpdateRequest.getQuestion());
 
-        for (Answer answerRequest : questionUpdateRequest.getAnswers()){
-            Answer answer = answerRepository.findById(answerRequest.getId())
-                    .orElseThrow(() -> new AppException(ErrorCode.ANSWER_NOT_FOUND));
-
-            if (answer.getQuestion().getId() != questionId){
-                throw new AppException(ErrorCode.ANSWER_NOT_FOUND);
+        if (questionUpdateRequest.getAnswers() != null) {
+            if (question.getAnswers() != null) {
+                answerRepository.deleteAll(question.getAnswers());
+                answerRepository.flush();
+                question.getAnswers().clear();
+                Set<Answer> updatedAnswers = questionUpdateRequest.getAnswers().stream()
+                        .map(answerMapper::toAnswer)
+                        .collect(Collectors.toSet());
+                updatedAnswers.forEach(answer -> answer.setQuestion(question));
+                question.getAnswers().addAll(updatedAnswers);
             }
-            answer.setAnswer(answerRequest.getAnswer());
-            answer.setScore(answerRequest.getScore());
         }
         return questionMapper.toQuestionResponse(questionRepository.save(question));
     }
 
-    @PreAuthorize("hasRole('ADMIN')")
+    @Transactional
     public void delete(int questionId) {
         Question question = questionRepository.findById(questionId)
                 .orElseThrow(() -> new AppException(ErrorCode.QUESTION_NOT_FOUND));
+
+        for (Quiz quiz : question.getQuizzes()) {
+            quiz.getQuestions().remove(question);
+        }
+        quizRepository.saveAll(question.getQuizzes());
+
+        if (!question.getAnswers().isEmpty()) {
+            answerRepository.deleteAll(question.getAnswers());
+        }
         questionRepository.delete(question);
     }
 
-    @PreAuthorize("hasRole('ADMIN')")
     public QuestionResponse addAnswersToQuestion(int questionId, AddAnswersToQuestionRequest request) {
         Question question = questionRepository.findById(questionId)
                 .orElseThrow(() -> new AppException(ErrorCode.QUESTION_NOT_FOUND));
@@ -113,7 +125,6 @@ public class QuestionService {
         return questionMapper.toQuestionResponse(questionRepository.save(question));
     }
 
-    @PreAuthorize("hasRole('ADMIN')")
     public QuestionResponse removeAnswersFromQuestion(int questionId, RemoveAnswersFromQuestionRequest request) {
         Question question = questionRepository.findById(questionId)
                 .orElseThrow(() -> new AppException(ErrorCode.QUIZ_NOT_FOUND));

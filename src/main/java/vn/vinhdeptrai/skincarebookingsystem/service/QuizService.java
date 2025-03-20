@@ -3,8 +3,8 @@ package vn.vinhdeptrai.skincarebookingsystem.service;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
-import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import vn.vinhdeptrai.skincarebookingsystem.dto.request.AddQuestionsToQuizRequest;
 import vn.vinhdeptrai.skincarebookingsystem.dto.request.QuizCreationRequest;
 import vn.vinhdeptrai.skincarebookingsystem.dto.request.QuizUpdateRequest;
@@ -16,9 +16,7 @@ import vn.vinhdeptrai.skincarebookingsystem.entity.ServiceCategory;
 import vn.vinhdeptrai.skincarebookingsystem.exception.AppException;
 import vn.vinhdeptrai.skincarebookingsystem.exception.ErrorCode;
 import vn.vinhdeptrai.skincarebookingsystem.mapper.QuizMapper;
-import vn.vinhdeptrai.skincarebookingsystem.repository.QuestionRepository;
-import vn.vinhdeptrai.skincarebookingsystem.repository.QuizRepository;
-import vn.vinhdeptrai.skincarebookingsystem.repository.ServiceCategoryRepository;
+import vn.vinhdeptrai.skincarebookingsystem.repository.*;
 
 import java.util.HashSet;
 import java.util.List;
@@ -33,6 +31,8 @@ public class QuizService {
     QuestionRepository questionRepository;
     QuizMapper quizMapper;
     ServiceCategoryRepository serviceCategoryRepository;
+    private final QuestionService questionService;
+    private final ServiceRecommendationRepository serviceRecommendationRepository;
 
     public List<QuizResponse> getQuizList() {
         List<Quiz> quizList = quizRepository.findAll();
@@ -45,14 +45,13 @@ public class QuizService {
     }
 
     public QuizResponse getQuizByCategoryID(int categoryId){
-        ServiceCategory category = serviceCategoryRepository.findById(categoryId)
+        serviceCategoryRepository.findById(categoryId)
                 .orElseThrow(() -> new AppException(ErrorCode.SERVICE_CATE_NOT_FOUND));
         Quiz quiz = quizRepository.findByCategory_Id(categoryId)
                 .orElseThrow(() -> new AppException(ErrorCode.QUIZ_NOT_FOUND));
         return quizMapper.toQuizResponse(quiz);
     }
 
-    @PreAuthorize("hasRole('ADMIN')")
     public QuizResponse create(QuizCreationRequest request) {
         ServiceCategory serviceCategory = serviceCategoryRepository.findById(request.getCate_id())
                 .orElseThrow(() -> new AppException(ErrorCode.SERVICE_CATE_NOT_FOUND));
@@ -64,12 +63,12 @@ public class QuizService {
         Quiz quiz = Quiz.builder()
                 .category(serviceCategory)
                 .title(request.getTitle())
+                .questions(new HashSet<>())
                 .build();
         quizRepository.save(quiz);
         return quizMapper.toQuizResponse(quiz);
     }
 
-    @PreAuthorize("hasRole('ADMIN')")
     public QuizResponse update(int quizId, QuizUpdateRequest quizUpdateRequest) {
         Quiz quiz = quizRepository.findById(quizId)
                 .orElseThrow(() -> new AppException(ErrorCode.QUIZ_NOT_FOUND));
@@ -91,14 +90,25 @@ public class QuizService {
         return quizMapper.toQuizResponse(quizRepository.save(quiz));
     }
 
-    @PreAuthorize("hasRole('ADMIN')")
+    @Transactional
     public void delete(int quizId) {
         Quiz quiz = quizRepository.findById(quizId)
                 .orElseThrow(() -> new AppException(ErrorCode.QUIZ_NOT_FOUND));
+
+        serviceRecommendationRepository.deleteByQuizId(quizId);
+
+        if (quiz.getQuestions() != null) {
+            List<Integer> questionIds = quiz.getQuestions().stream()
+                    .map(Question::getId)
+                    .toList();
+
+            for (Integer questionId : questionIds) {
+                questionService.delete(questionId);
+            }
+        }
         quizRepository.delete(quiz);
     }
 
-    @PreAuthorize("hasRole('ADMIN')")
     public QuizResponse addQuestionsToQuiz(int quizId, AddQuestionsToQuizRequest request) {
         Quiz quiz = quizRepository.findById(quizId)
                 .orElseThrow(() -> new AppException(ErrorCode.QUIZ_NOT_FOUND));
@@ -113,7 +123,6 @@ public class QuizService {
         return quizMapper.toQuizResponse(quizRepository.save(quiz));
     }
 
-    @PreAuthorize("hasRole('ADMIN')")
     public QuizResponse removeQuestionsFromQuiz(int quizId, RemoveQuestionsFromQuizRequest request) {
         Quiz quiz = quizRepository.findById(quizId)
                 .orElseThrow(() -> new AppException(ErrorCode.QUIZ_NOT_FOUND));

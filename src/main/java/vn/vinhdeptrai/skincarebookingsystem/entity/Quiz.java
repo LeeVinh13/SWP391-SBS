@@ -3,6 +3,7 @@ package vn.vinhdeptrai.skincarebookingsystem.entity;
 import jakarta.persistence.*;
 import lombok.*;
 import lombok.experimental.FieldDefaults;
+import org.hibernate.annotations.Cascade;
 
 import java.util.Set;
 
@@ -31,5 +32,6 @@ public class Quiz {
             joinColumns = @JoinColumn(name = "quiz_id"),
             inverseJoinColumns = @JoinColumn(name = "question_id")
     )
+    @Cascade(org.hibernate.annotations.CascadeType.ALL)
     Set<Question> questions; // một quiz có nhiều câu hỏi
 }

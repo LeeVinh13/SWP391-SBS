@@ -3,7 +3,6 @@ package vn.vinhdeptrai.skincarebookingsystem.service;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
-import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Service;
 import vn.vinhdeptrai.skincarebookingsystem.dto.request.AnswerRequest;
 import vn.vinhdeptrai.skincarebookingsystem.dto.response.AnswerResponse;
@@ -14,7 +13,6 @@ import vn.vinhdeptrai.skincarebookingsystem.exception.ErrorCode;
 import vn.vinhdeptrai.skincarebookingsystem.mapper.AnswerMapper;
 import vn.vinhdeptrai.skincarebookingsystem.repository.AnswerRepository;
 import vn.vinhdeptrai.skincarebookingsystem.repository.QuestionRepository;
-import vn.vinhdeptrai.skincarebookingsystem.repository.QuizRepository;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -27,8 +25,6 @@ public class AnswerService {
     private final AnswerRepository answerRepository;
     AnswerMapper answerMapper;
     private final QuestionRepository questionRepository;
-    private final QuizRepository quizRepository;
-
     public List<AnswerResponse> getAnswerList() {
         List<Answer> answerList = answerRepository.findAll();
         return answerList.stream().map(answerMapper::toAnswerResponse).collect(Collectors.toList());
@@ -39,7 +35,6 @@ public class AnswerService {
         return answerMapper.toAnswerResponse(answer);
     }
 
-    @PreAuthorize("hasRole('ADMIN')")
     public AnswerResponse create(AnswerRequest request) {
         //không check existed answer vì có thể có nhiều câu hỏi cần trả lời giống nhau cùng trọng số
         //Ex: câu trả lời về thời gian hoặc mức độ
@@ -73,7 +68,6 @@ public class AnswerService {
         return answerList;
     }
 
-    @PreAuthorize("hasRole('ADMIN')")
     public AnswerResponse update(int answerId, AnswerRequest request) {
         //chỉ update nội dung câu trả lời và điểm vì ở question sẽ có API add hoặc remove answer
 
@@ -85,7 +79,6 @@ public class AnswerService {
         return answerMapper.toAnswerResponse(answerRepository.save(answer));
     }
 
-    @PreAuthorize("hasRole('ADMIN')")
     public void delete(int answerId) {
         Answer answer = answerRepository.findById(answerId)
                 .orElseThrow(() -> new AppException(ErrorCode.ANSWER_NOT_FOUND));

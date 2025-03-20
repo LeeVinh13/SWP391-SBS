@@ -15,6 +15,7 @@ public class ServiceRecommendationResponse {
     String quiz_title;
     int service_id;
     String service_name;
+    String thumbnail_url;
     int minScore;
     int maxScore;
 }

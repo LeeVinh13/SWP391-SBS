@@ -12,5 +12,6 @@ public interface ServiceRecommendationMapper {
     @Mapping(source = "quiz.title", target = "quiz_title")
     @Mapping(source = "service.id", target = "service_id")
     @Mapping(source = "service.name", target = "service_name")
+    @Mapping(source = "service.thumbnail", target = "thumbnail_url")
     ServiceRecommendationResponse toServiceRecommendationResponse(ServiceRecommendation serviceRecommendation);
 }
