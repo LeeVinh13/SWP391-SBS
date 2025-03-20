@@ -69,6 +69,7 @@ public class PaymentService {
             return PaymentResponse.builder()
                     .code("00")
                     .message("Payment successfully")
+                    .redirectUrl("/my-upcoming-appointment")
                     .build();
         }
         appointment.setCancelAt(LocalDateTime.now());
@@ -79,6 +80,7 @@ public class PaymentService {
         return PaymentResponse.builder()
                 .code(vnp_ResponseCode)
                 .message("Payment failed")
+                .redirectUrl("/payment-failed")
                 .build();
 
     }
