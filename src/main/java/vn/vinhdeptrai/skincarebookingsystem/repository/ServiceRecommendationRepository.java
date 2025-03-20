@@ -21,4 +21,7 @@ public interface ServiceRecommendationRepository extends JpaRepository<ServiceRe
     @Query("DELETE FROM ServiceRecommendation sr WHERE sr.quiz.id = :quizId")
     void deleteByQuizId(@Param("quizId") int quizId);
 
+    @Modifying
+    @Query("DELETE FROM ServiceRecommendation sr WHERE sr.service.id = :serviceId")
+    void deleteByServiceId(@Param("serviceId") int serviceId);
 }

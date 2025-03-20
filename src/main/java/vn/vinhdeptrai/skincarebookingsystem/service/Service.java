@@ -8,6 +8,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 import vn.vinhdeptrai.skincarebookingsystem.dto.request.ServiceRequest;
 import vn.vinhdeptrai.skincarebookingsystem.dto.response.ServiceResponse;
@@ -16,6 +17,7 @@ import vn.vinhdeptrai.skincarebookingsystem.exception.AppException;
 import vn.vinhdeptrai.skincarebookingsystem.exception.ErrorCode;
 import vn.vinhdeptrai.skincarebookingsystem.mapper.ServiceMapper;
 import vn.vinhdeptrai.skincarebookingsystem.repository.ServiceCategoryRepository;
+import vn.vinhdeptrai.skincarebookingsystem.repository.ServiceRecommendationRepository;
 import vn.vinhdeptrai.skincarebookingsystem.repository.ServiceRepository;
 import vn.vinhdeptrai.skincarebookingsystem.util.CloudinaryUtil;
 
@@ -31,6 +33,8 @@ public class Service {
     ServiceMapper serviceMapper;
     CloudinaryUtil cloudinaryUtil;
     ServiceCategoryRepository serviceCategoryRepository;
+    private final ServiceRecommendationRepository serviceRecommendationRepository;
+
     public List<ServiceResponse> getAll() {
         List<vn.vinhdeptrai.skincarebookingsystem.entity.Service> services = serviceRepository.findAll();
         if (services.isEmpty()) {
@@ -59,6 +63,7 @@ public class Service {
         service.setCategory(serviceCategory);
         return serviceMapper.toServiceResponse(serviceRepository.save(service));
     }
+    @Transactional
     public ServiceResponse update(ServiceRequest serviceRequest, int id, MultipartFile file) throws IOException {
         vn.vinhdeptrai.skincarebookingsystem.entity.Service service = serviceRepository.findById(id).orElseThrow(
                 () -> new AppException(ErrorCode.SERVICE_NOT_FOUND)
@@ -72,10 +77,13 @@ public class Service {
         service.setCategory(serviceCategory);
         return serviceMapper.toServiceResponse(serviceRepository.save(service));
     }
+    @Transactional
     public void delete(int id) {
         vn.vinhdeptrai.skincarebookingsystem.entity.Service service = serviceRepository.findById(id).orElseThrow(
                 () -> new AppException(ErrorCode.SERVICE_NOT_FOUND)
         );
+        serviceRecommendationRepository.deleteByServiceId(id);
+        serviceRecommendationRepository.flush();
         serviceRepository.deleteById(id);
     }
 
