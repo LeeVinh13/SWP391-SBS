@@ -24,7 +24,7 @@ public class Slot {
     int id;
     LocalDate date;
     LocalTime time;
-    @OneToMany(mappedBy = "slot", cascade = CascadeType.ALL)
+    @OneToMany(mappedBy = "slot",cascade = CascadeType.ALL, orphanRemoval = true)
     Set<SlotDetail> slotDetails;
 
 }

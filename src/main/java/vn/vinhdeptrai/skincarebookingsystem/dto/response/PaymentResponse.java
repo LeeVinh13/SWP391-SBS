@@ -15,4 +15,5 @@ public class PaymentResponse {
     String code;
     String message;
     String paymentUrl;
+    String redirectUrl;
 }

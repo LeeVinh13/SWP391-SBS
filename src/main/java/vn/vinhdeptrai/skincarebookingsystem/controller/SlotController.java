@@ -41,6 +41,7 @@ public class SlotController {
                 .result(slotService.getSlotsById(id))
                 .build();
     }
+
     @GetMapping("/date-and-therapist")
     public ApiResponse<List<SlotResponse>> getSlotsByDateAndTherapist(@RequestParam("date") LocalDate date,
                                                                       @RequestParam("therapistId") int therapistId) {
@@ -60,6 +61,12 @@ public class SlotController {
                 .result(slotService.getAvailableSlotsByTherapist(therapistId))
                 .build();
     }
+    @PostMapping("/generate/day")
+    public ApiResponse<List<SlotResponse>> generateSlotForDay(@RequestBody SlotRequest slotRequest) {
+        return ApiResponse.<List<SlotResponse>>builder()
+                .result(slotService.generateSlotsForDay(slotRequest))
+                .build();
+    }
     @PostMapping("/generate/date-range")
     public ApiResponse<List<SlotResponse>> generateSlotForDateRange(@RequestParam("startDate") LocalDate startDate
             , @RequestParam("endDate") LocalDate endDate,@RequestParam("therapistIds") Set<Integer> therapistIds) {
@@ -67,12 +74,7 @@ public class SlotController {
                 .result(slotService.generateSlotsForDateRange(startDate, endDate, therapistIds))
                 .build();
     }
-    @PostMapping("/generate/day")
-    public ApiResponse<List<SlotResponse>> generateSlotForDay(@RequestBody SlotRequest slotRequest) {
-        return ApiResponse.<List<SlotResponse>>builder()
-                .result(slotService.generateSlotsForDay(slotRequest))
-                .build();
-    }
+
     @DeleteMapping("/delete/{id}")
     public ApiResponse<Void> delete(@PathVariable int id) {
         slotService.delete(id);

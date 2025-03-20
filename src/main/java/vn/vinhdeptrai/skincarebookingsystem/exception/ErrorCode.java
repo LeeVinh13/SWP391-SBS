@@ -16,6 +16,8 @@ public enum ErrorCode {
     UNAUTHORIZED(1006, "You do not have permission", HttpStatus.FORBIDDEN),
 
     SLOT_NOT_AVAILABLE(1012, "Slot is not available", HttpStatus.CONFLICT),
+    SLOT_ALREADY_EXISTS(2016, "Slots already exist for this date", HttpStatus.CONFLICT),
+
     APPOINTMENT_CANCELLED(1013, "Appointment cancelled", HttpStatus.CONFLICT),
     SLOT_NOT_FOUND(1013, "Slot not found", HttpStatus.NOT_FOUND),
     USER_NOT_FOUND(1007, "User not found!", HttpStatus.NOT_FOUND),
@@ -26,6 +28,9 @@ public enum ErrorCode {
     APPOINTMENT_NOT_FOUND(1014, "Appointment not found!", HttpStatus.NOT_FOUND),
 
     CATEGORY_CONTAINING_SERVICE(1015, "Cannot delete category because it contain service!", HttpStatus.NOT_FOUND),
+
+    INVALID_START_DATE(1016, "Start date cannot in the past", HttpStatus.BAD_REQUEST),
+    INVALID_END_DATE(1017, "End date is more than 7 days after start date", HttpStatus.BAD_REQUEST),
 
     QUIZ_NOT_FOUND(2000, "Quiz not found!", HttpStatus.NOT_FOUND),
     QUESTION_NOT_FOUND(2001, "Question not found!", HttpStatus.NOT_FOUND),
