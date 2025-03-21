@@ -80,7 +80,7 @@ public class PaymentService {
         return PaymentResponse.builder()
                 .code(vnp_ResponseCode)
                 .message("Payment failed")
-                .redirectUrl("/payment-failed")
+                .redirectUrl("http://localhost:5173/booking")
                 .build();
 
     }
