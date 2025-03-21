@@ -74,7 +74,7 @@ public class TherapistService {
         return therapistMapper.toTherapistResponse(therapistRepository.save(therapist));
     }
     public void delete(int id) throws AppException {
-        if(userRepository.existsById(id)){
+        if(!userRepository.existsById(id)){
             throw new AppException(ErrorCode.THERAPIST_NOT_FOUND);
         }
         therapistRepository.deleteById(id);
