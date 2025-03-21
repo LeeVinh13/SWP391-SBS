@@ -54,7 +54,18 @@ public class SlotService {
                 new AppException(ErrorCode.SLOT_NOT_FOUND))
         );
     }
-
+    public List<SlotResponse> getAvailableSlotsByDate(LocalDate date) {
+        List<Slot> slots = slotRepository.findByDate(date);
+        List<Slot> availableSlots = slots.stream().map(
+                        slot -> {
+                            Set<SlotDetail> slotDetails = slotDetailRepository.findBySlotAndStatus(slot, SlotStatus.AVAILABLE);
+                            slot.setSlotDetails(slotDetails);
+                            return slot;
+                        })
+                .filter(slot -> !slot.getSlotDetails().isEmpty())
+                .toList();
+        return availableSlots.stream().map(slot -> slotMapper.toSlotResponse(slot)).collect(Collectors.toList());
+    }
     public List<SlotResponse> getAvailableSlotsByTherapist(int therapistId) {
         Therapist therapist = therapistRepository.findById(therapistId).orElseThrow(
                 () -> new AppException(ErrorCode.THERAPIST_NOT_FOUND)
@@ -67,21 +78,7 @@ public class SlotService {
                 })
                 .collect(Collectors.toList());
     }
-
-    public List<SlotResponse> getAvailableSlotsByDate(LocalDate date) {
-        List<Slot> slots = slotRepository.findByDate(date);
-        List<Slot> availableSlots = slots.stream().map(
-                slot -> {
-                    Set<SlotDetail> slotDetails = slotDetailRepository.findBySlotAndStatus(slot, SlotStatus.AVAILABLE);
-                    slot.setSlotDetails(slotDetails);
-                    return slot;
-                })
-                .filter(slot -> !slot.getSlotDetails().isEmpty())
-                .toList();
-         return availableSlots.stream().map(slot -> slotMapper.toSlotResponse(slot)).collect(Collectors.toList());
-    }
-
-    public List<SlotResponse> getSlotsByDayAndTherapist(LocalDate date, int therapistId) {
+    public List<SlotResponse> getSlotsByDateAndTherapist(LocalDate date, int therapistId) {
         Therapist therapist = therapistRepository.findById(therapistId).orElseThrow(
                 () -> new AppException(ErrorCode.THERAPIST_NOT_FOUND)
         );
@@ -94,60 +91,111 @@ public class SlotService {
         ).collect(Collectors.toList());
     }
 
-    public List<SlotResponse> generateSlotsForDay(SlotRequest slotRequest) {
-        if(isValidDate(slotRequest.getDate())) {
+    public List<SlotResponse> generateSlotsForDate(SlotRequest slotRequest) {
+        LocalDate date = slotRequest.getDate();
+        Set<Integer> therapistIds = slotRequest.getTherapistIds();
+        if(isValidDate(date)) {
             throw new AppException(ErrorCode.INVALID_START_DATE);
         }
-        List<Therapist> therapists = therapistRepository.findAllById(slotRequest.getTherapistIds());
-        if (therapists.isEmpty()) {
+        List<Therapist> therapists = therapistRepository.findAllById(therapistIds);
+        if(therapists.isEmpty()) {
             throw new AppException(ErrorCode.THERAPIST_NOT_FOUND);
         }
-        List<Slot> availableSlots = slotRepository.findByDate(slotRequest.getDate());
-        if (!availableSlots.isEmpty()) {
-            throw new AppException(ErrorCode.SLOT_ALREADY_EXISTS);
-        }
-        List<Slot> slots = WORKING_HOURS.stream()
-                .filter(time -> !slotRepository.existsByDateAndTime(slotRequest.getDate(), time))
-                .map(time -> {
-                    Slot slot = slotMapper.toSlot(slotRequest);
-                    slot.setTime(time);
-                    return slotRepository.save(slot);
-                }).toList();
-        List<SlotDetail> slotDetails = createSlotDetails(slots, therapists);
-
-        for (Slot slot : slots) {
-            Set<SlotDetail> slotDetail = slotDetails.stream()
-                    .filter(sd -> sd.getSlot().getId() == slot.getId())
-                    .collect(Collectors.toSet());
-            slot.setSlotDetails(slotDetail);
-        }
-        slotRepository.saveAll(slots);
+        List<Slot> slots = createSlotForDate(date);
+        createMissingSlotDetail(slots, therapists);
 
         return slots.stream().map(slot -> slotMapper.toSlotResponse(slot)).collect(Collectors.toList());
     }
 
-    public List<SlotResponse> generateSlotsForDateRange(LocalDate startDate, LocalDate endTime, Set<Integer> therapistIds) {
-        //ko chọn ngày quá khứ
+    private void createMissingSlotDetail(List<Slot> slots,List<Therapist> therapists) {
+        List<SlotDetail> newSlotDetails = new ArrayList<>();
+        for(Slot slot : slots) {
+            if(slot.getSlotDetails() == null){
+                slot.setSlotDetails(new HashSet<>());
+            }
+            //lấy danh sách Therapist đã có Slot
+            Set<Integer> existingTherapistIds = slot.getSlotDetails().stream()
+                    .map(sd -> sd.getTherapist().getId())
+                    .collect(Collectors.toSet());
+            for(Therapist therapist : therapists) {
+                if(!existingTherapistIds.contains(therapist.getId())) {
+                    SlotDetail newSlotDetail = SlotDetail.builder()
+                            .slot(slot)
+                            .therapist(therapist)
+                            .status(SlotStatus.AVAILABLE)
+                            .build();
+                    newSlotDetails.add(newSlotDetail);
+                }
+            }
+
+        }
+        //Lưu và kết nối các newSlotDetail
+        if(!newSlotDetails.isEmpty()){
+            slotDetailRepository.saveAll(newSlotDetails);
+            for (Slot slot : slots) {
+                // Duyệt qua tất cả SlotDetail mới
+                boolean slotUpdated = false;
+                for (SlotDetail slotDetail : newSlotDetails) {
+                    // Nếu SlotDetail thuộc về slot hiện tại
+                    if (slotDetail.getSlot().getId() == slot.getId()) {
+                        // Thêm vào collection của slot
+                        slot.getSlotDetails().add(slotDetail);
+                        slotUpdated = true;
+                    }
+                }
+                // Chỉ lưu slot nếu có thay đổi
+                if (slotUpdated) {
+                    slotRepository.save(slot);
+                }
+            }
+        }
+    }
+
+    private List<Slot> createSlotForDate(LocalDate date) {
+        //20-3-2025
+        List<Slot> existingSlots = slotRepository.findByDate(date);
+        if(existingSlots.size() == WORKING_HOURS.size()) {
+            return existingSlots;
+        }
+        //size = 9
+        // 9 11 12 15
+        Set<LocalTime> existingTimes = existingSlots.stream()
+                .map(slot -> slot.getTime()).collect(Collectors.toSet());
+        List<Slot> newSlots = WORKING_HOURS.stream()
+                .filter(time -> !existingTimes.contains(time))
+                .map(time -> {Slot newSlot = Slot.builder()
+                                .date(date)
+                                .time(time)
+                                .build();
+                    return slotRepository.save(newSlot);
+                }).toList();
+       List<Slot> allSlots = new ArrayList<>(existingSlots);
+       allSlots.addAll(newSlots);
+       return allSlots;
+    }
+
+
+    public List<SlotResponse> generateSlotsForDateRange(LocalDate startDate, LocalDate endDate, Set<Integer> therapistIds) {
         if (isValidDate(startDate)) {
             throw new AppException(ErrorCode.INVALID_START_DATE);
         }
-        //phải chọn từ ngày thứ 7 trở đi từ startDate
-        if (endTime.isBefore(startDate.plusDays(7))) {
+
+        if (endDate.isBefore(startDate.plusDays(5))) {
             throw new AppException(ErrorCode.INVALID_END_DATE);
         }
-        List<SlotResponse> allSlots = new ArrayList<>();
-        SlotRequest slotRequest = SlotRequest.builder()
-                .therapistIds(therapistIds)
-                .build();
 
-        startDate.datesUntil(endTime.plusDays(1))
-                .forEach(date -> {
-                    slotRequest.setDate(date);
-                    List<SlotResponse> slotsForDay = generateSlotsForDay(slotRequest);
-                    allSlots.addAll(slotsForDay);
-                });
+        List<SlotResponse> allSlots = new ArrayList<>();
+        startDate.datesUntil(endDate.plusDays(1)).forEach(date -> {
+            SlotRequest request = SlotRequest.builder()
+                    .therapistIds(therapistIds)
+                    .date(date)
+                    .build();
+            allSlots.addAll(generateSlotsForDate(request));
+        });
+
         return allSlots;
     }
+
     public void delete(int slotId) {
         Slot slot = slotRepository.findById(slotId)
                 .orElseThrow(() -> new AppException(ErrorCode.SLOT_NOT_FOUND));
@@ -159,27 +207,12 @@ public class SlotService {
         slotRepository.delete(slot);
     }
 
-    private List<SlotDetail> createSlotDetails(List<Slot> slots, List<Therapist> therapists) {
-        List<SlotDetail> slotDetails = new ArrayList<>();
-        for (Slot slot : slots) {
-            for (Therapist therapist : therapists) {
-                SlotDetail slotDetail = SlotDetail.builder()
-                        .slot(slot)
-                        .therapist(therapist)
-                        .status(SlotStatus.AVAILABLE)
-                        .build();
-                slotDetails.add(slotDetail);
-            }
-        }
-        slotDetailRepository.saveAll(slotDetails);
-        return slotDetails;
+    private Set<SlotDetail> filteredSlotDetailsByTherapist(Slot slot, int therapistId) {
+        return slot.getSlotDetails().stream().filter(
+                slotDetail -> slotDetail.getTherapist().getId() == therapistId
+        ).collect(Collectors.toSet());
     }
 
-    private Set<SlotDetail>  filteredSlotDetailsByTherapist(Slot slot, int therapistId) {
-        return slot.getSlotDetails().stream().filter(
-                        slotDetail -> slotDetail.getTherapist().getId() == therapistId)
-                .collect(Collectors.toSet());
-    }
     private boolean isValidDate(LocalDate date) {
         return date.isBefore(LocalDate.now());
     }
