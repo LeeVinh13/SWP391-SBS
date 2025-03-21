@@ -1,8 +1,7 @@
 package vn.vinhdeptrai.skincarebookingsystem.mapper;
 
-import org.mapstruct.Mapper;
-import org.mapstruct.Mapping;
-import org.mapstruct.MappingTarget;
+import org.mapstruct.*;
+import org.springframework.context.annotation.Bean;
 import vn.vinhdeptrai.skincarebookingsystem.dto.request.TherapistRequest;
 import vn.vinhdeptrai.skincarebookingsystem.dto.response.TherapistResponse;
 import vn.vinhdeptrai.skincarebookingsystem.entity.Therapist;
@@ -13,5 +12,6 @@ public interface TherapistMapper {
     Therapist toTherapist(TherapistRequest therapistRequest);
     TherapistResponse toTherapistResponse(Therapist therapist);
     @Mapping(target = "image", ignore = true)
+    @BeanMapping(nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.IGNORE)
     void updateTherapist(@MappingTarget Therapist therapist, TherapistRequest therapistRequest);
 }
