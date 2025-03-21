@@ -14,18 +14,21 @@ import java.util.stream.Collectors;
 @Mapper(componentModel = "spring")
 public interface SlotMapper {
     Slot toSlot(SlotRequest slotRequest);
+
     @Mapping(target = "therapists", expression = "java(mapTherapists(slot.getSlotDetails()))")
     SlotResponse toSlotResponse(Slot slot);
+
     default Set<TherapistResponse> mapTherapists(Set<SlotDetail> slotDetails) {
         if (slotDetails == null) {
             return Set.of();
         }
         return slotDetails.stream()
-                .map(slotDetail -> TherapistResponse.builder()
-                        .id(slotDetail.getTherapist().getId())
-                        .fullname(slotDetail.getTherapist().getFullname())
-                        .status(slotDetail.getStatus())
-                        .build())
+                .map(slotDetail ->
+                        TherapistResponse.builder()
+                                .id(slotDetail.getTherapist().getId())
+                                .fullname(slotDetail.getTherapist().getFullname())
+                                .status(slotDetail.getStatus())
+                                .build())
                 .collect(Collectors.toSet());
     }
 
