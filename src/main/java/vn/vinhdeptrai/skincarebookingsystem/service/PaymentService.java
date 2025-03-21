@@ -69,7 +69,7 @@ public class PaymentService {
             return PaymentResponse.builder()
                     .code("00")
                     .message("Payment successfully")
-                    .redirectUrl("/my-upcoming-appointment")
+                    .redirectUrl("http://localhost:5173/history")
                     .build();
         }
         appointment.setCancelAt(LocalDateTime.now());
