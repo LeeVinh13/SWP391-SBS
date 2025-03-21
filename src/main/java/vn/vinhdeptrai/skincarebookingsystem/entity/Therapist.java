@@ -20,7 +20,7 @@ public class Therapist extends User{
     int experience;
     String image;
     String description;
-    @OneToMany(mappedBy = "therapist", cascade = CascadeType.ALL,fetch = FetchType.EAGER)
+    @OneToMany(mappedBy = "therapist", cascade = CascadeType.ALL,orphanRemoval = true)
     List<SlotDetail> slotDetails;
 
 }
