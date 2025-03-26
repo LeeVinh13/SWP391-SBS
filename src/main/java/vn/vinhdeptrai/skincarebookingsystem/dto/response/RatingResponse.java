@@ -11,7 +11,7 @@ public class RatingResponse {
     private int id;
     private int stars;
     private String feedback;
-    private String username;
+    private String userFullname;
     private String therapist;
     private String service;
     private LocalDateTime createdAt;
