@@ -37,32 +37,25 @@ public class AppointmentService {
 
     public List<AppointmentResponse> myUpcomingAppointment() {
         User user = getUser();
-        List<AppointmentResponse> appointments = appointmentRepository.findByUserAndPaymentStatus(user, PaymentStatus.PARTIALLY_PAID)
+       return appointmentRepository.findByUserAndPaymentStatus(user, PaymentStatus.PARTIALLY_PAID)
                 .stream()
                 .filter(apt -> isUpcomingAppointment(apt.getSlotDetail().getSlot().getDate()))
                 .map(apt -> {
                     return appointmentMapper.toAppointmentResponse(apt);
                 })
                 .toList();
-        //stream không bgio trả về null, toList có thể trả về mảng rỗng nhưng cũng ko null
-        if (appointments.isEmpty()) {
-            throw new AppException(ErrorCode.APPOINTMENT_NOT_FOUND);
-        }
-        return appointments;
+
     }
 
     public List<AppointmentResponse> myHistoricalAppointment() {
         User user = getUser();
-        List<AppointmentResponse> appointments = appointmentRepository.findByUserAndPaymentStatus(user, PaymentStatus.PAID).stream()
+        return appointmentRepository.findByUserAndPaymentStatus(user, PaymentStatus.PAID).stream()
                 .filter(apt -> !isUpcomingAppointment(apt.getSlotDetail().getSlot().getDate()))
                 .map(apt -> {
                         return appointmentMapper.toAppointmentResponse(apt)
                     ;})
                 .toList();
-        if (appointments.isEmpty()) {
-            throw new AppException(ErrorCode.APPOINTMENT_NOT_FOUND);
-        }
-        return appointments;
+
     }
 
     public AppointmentResponse getAppointment(int id) {
