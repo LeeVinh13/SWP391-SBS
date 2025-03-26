@@ -31,6 +31,7 @@ public enum ErrorCode {
 
     INVALID_START_DATE(1016, "Start date cannot in the past", HttpStatus.BAD_REQUEST),
     INVALID_END_DATE(1017, "End date is more than 6 days after start date", HttpStatus.BAD_REQUEST),
+    INVALID_DATE_RANGE(1018, "Date range is invalid", HttpStatus.BAD_REQUEST),
 
     QUIZ_NOT_FOUND(2000, "Quiz not found!", HttpStatus.NOT_FOUND),
     QUESTION_NOT_FOUND(2001, "Question not found!", HttpStatus.NOT_FOUND),
