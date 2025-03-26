@@ -66,11 +66,6 @@ public class TherapistService {
         Therapist therapist = therapistRepository.findById(id).orElseThrow(
                 () -> new AppException(ErrorCode.THERAPIST_NOT_FOUND)
         );
-        if(userRepository.existsByUsername(therapistRequest.getUsername())){
-            throw new AppException(ErrorCode.USER_EXISTED);
-        }
-        Role therapistRole = roleRepository.findByName(PredefinedRole.THERAPIST_ROLE).orElseThrow(
-                () -> new AppException(ErrorCode.ROLE_NOT_FOUND));
         therapistMapper.updateTherapist(therapist,therapistRequest);
 //        therapist.setPassword(passwordEncoder.encode(therapistRequest.getPassword()));
         if(file != null){
@@ -79,7 +74,7 @@ public class TherapistService {
         return therapistMapper.toTherapistResponse(therapistRepository.save(therapist));
     }
     public void delete(int id) throws AppException {
-        if(userRepository.existsById(id)){
+        if(!userRepository.existsById(id)){
             throw new AppException(ErrorCode.THERAPIST_NOT_FOUND);
         }
         therapistRepository.deleteById(id);

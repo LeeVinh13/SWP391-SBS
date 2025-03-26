@@ -30,7 +30,7 @@ public enum ErrorCode {
     CATEGORY_CONTAINING_SERVICE(1015, "Cannot delete category because it contain service!", HttpStatus.NOT_FOUND),
 
     INVALID_START_DATE(1016, "Start date cannot in the past", HttpStatus.BAD_REQUEST),
-    INVALID_END_DATE(1017, "End date is more than 7 days after start date", HttpStatus.BAD_REQUEST),
+    INVALID_END_DATE(1017, "End date is more than 6 days after start date", HttpStatus.BAD_REQUEST),
 
     QUIZ_NOT_FOUND(2000, "Quiz not found!", HttpStatus.NOT_FOUND),
     QUESTION_NOT_FOUND(2001, "Question not found!", HttpStatus.NOT_FOUND),

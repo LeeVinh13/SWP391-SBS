@@ -51,7 +51,7 @@ public class TherapistController {
                 .build();
     }
     @DeleteMapping(value = "/delete/{id}")
-    public ApiResponse<Void> update(@PathVariable("id") int id) throws IOException {
+    public ApiResponse<Void> delete(@PathVariable("id") int id) throws IOException {
         therapistService.delete(id);
         return ApiResponse.<Void>builder()
                 .build();
