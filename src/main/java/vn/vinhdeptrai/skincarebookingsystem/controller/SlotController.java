@@ -61,12 +61,28 @@ public class SlotController {
                 .result(slotService.getAvailableSlotsByTherapist(therapistId))
                 .build();
     }
+    @GetMapping("/therapist")
+    public ApiResponse<List<SlotResponse>> getSlotForTherapist(@RequestParam("therapistId") int therapistId,
+                                                         @RequestParam("startDate") LocalDate startDate,
+                                                         @RequestParam("endDate") LocalDate endDate) {
+        return ApiResponse.<List<SlotResponse>>builder()
+                .result(slotService.getTherapistSchedule(therapistId,startDate,endDate))
+                .build();
+    }
+    @GetMapping("/therapist/delete")
+    public ApiResponse<Void> deleteScheduleByTherapistAndDate(@RequestParam("therapistId") int therapistId,
+                                                              @RequestParam("date") LocalDate date) {
+        slotService.deleteScheduleByTherapistAndDate(therapistId,date);
+        return ApiResponse.<Void>builder()
+                .build();
+    }
     @PostMapping("/generate/day")
     public ApiResponse<List<SlotResponse>> generateSlotForDay(@RequestBody SlotRequest slotRequest) {
         return ApiResponse.<List<SlotResponse>>builder()
                 .result(slotService.generateSlotsForDate(slotRequest))
                 .build();
     }
+
     @PostMapping("/generate/date-range")
     public ApiResponse<List<SlotResponse>> generateSlotForDateRange(@RequestParam("startDate") LocalDate startDate
             , @RequestParam("endDate") LocalDate endDate,@RequestParam("therapistIds") Set<Integer> therapistIds) {

@@ -106,7 +106,61 @@ public class SlotService {
 
         return slots.stream().map(slot -> slotMapper.toSlotResponse(slot)).collect(Collectors.toList());
     }
+    public List<SlotResponse> generateSlotsForDateRange(LocalDate startDate, LocalDate endDate, Set<Integer> therapistIds) {
+        if (isValidDate(startDate)) {
+            throw new AppException(ErrorCode.INVALID_START_DATE);
+        }
 
+        if (endDate.isBefore(startDate.plusDays(5))) {
+            throw new AppException(ErrorCode.INVALID_END_DATE);
+        }
+
+        List<SlotResponse> allSlots = new ArrayList<>();
+        startDate.datesUntil(endDate.plusDays(1)).forEach(date -> {
+            SlotRequest request = SlotRequest.builder()
+                    .therapistIds(therapistIds)
+                    .date(date)
+                    .build();
+            allSlots.addAll(generateSlotsForDate(request));
+        });
+
+        return allSlots;
+    }
+
+    public void delete(int slotId) {
+        Slot slot = slotRepository.findById(slotId)
+                .orElseThrow(() -> new AppException(ErrorCode.SLOT_NOT_FOUND));
+        Set<SlotDetail> slotDetailsCopy = slot.getSlotDetails();
+        for (SlotDetail detail : slotDetailsCopy) {
+            detail.setSlot(null);
+            slotDetailRepository.deleteById(detail.getId());
+        }
+        slotRepository.delete(slot);
+    }
+
+    //lấy lịch làm vệc của therapist trong khoảng thời gian
+    public List<SlotResponse> getTherapistSchedule(int therapistId, LocalDate startDate, LocalDate endDate){
+        if(endDate.isBefore(startDate)) {
+            throw new AppException(ErrorCode.INVALID_DATE_RANGE);
+        }
+        Therapist therapist = therapistRepository.findById(therapistId).orElseThrow(
+                () -> new AppException(ErrorCode.THERAPIST_NOT_FOUND)
+        );
+        List<Slot> slots = slotRepository.findBySlotDetails_TherapistAndDateBetween(therapist, startDate, endDate);
+        return slots.stream()
+                .map(slot -> {slot.setSlotDetails(filteredSlotDetailsByTherapist(slot, therapistId));
+                            return slotMapper.toSlotResponse(slot);}).toList();
+    }
+    //delete slot for therapist cụ thể
+    public void deleteScheduleByTherapistAndDate(int therapistId, LocalDate date) {
+        Therapist therapist = therapistRepository.findById(therapistId).orElseThrow(
+                () -> new AppException(ErrorCode.THERAPIST_NOT_FOUND)
+        );
+        List<SlotDetail> slotDetails = slotDetailRepository.findByTherapistAndSlot_Date(therapist,date);
+        if(!slotDetails.isEmpty()) {
+            slotDetailRepository.deleteAll(slotDetails);
+        }
+    }
     private void createMissingSlotDetail(List<Slot> slots,List<Therapist> therapists) {
         List<SlotDetail> newSlotDetails = new ArrayList<>();
         for(Slot slot : slots) {
@@ -151,6 +205,7 @@ public class SlotService {
         }
     }
 
+
     private List<Slot> createSlotForDate(LocalDate date) {
         //20-3-2025
         List<Slot> existingSlots = slotRepository.findByDate(date);
@@ -164,49 +219,15 @@ public class SlotService {
         List<Slot> newSlots = WORKING_HOURS.stream()
                 .filter(time -> !existingTimes.contains(time))
                 .map(time -> {Slot newSlot = Slot.builder()
-                                .date(date)
-                                .time(time)
-                                .build();
+                        .date(date)
+                        .time(time)
+                        .build();
                     return slotRepository.save(newSlot);
                 }).toList();
-       List<Slot> allSlots = new ArrayList<>(existingSlots);
-       allSlots.addAll(newSlots);
-       return allSlots;
-    }
-
-
-    public List<SlotResponse> generateSlotsForDateRange(LocalDate startDate, LocalDate endDate, Set<Integer> therapistIds) {
-        if (isValidDate(startDate)) {
-            throw new AppException(ErrorCode.INVALID_START_DATE);
-        }
-
-        if (endDate.isBefore(startDate.plusDays(5))) {
-            throw new AppException(ErrorCode.INVALID_END_DATE);
-        }
-
-        List<SlotResponse> allSlots = new ArrayList<>();
-        startDate.datesUntil(endDate.plusDays(1)).forEach(date -> {
-            SlotRequest request = SlotRequest.builder()
-                    .therapistIds(therapistIds)
-                    .date(date)
-                    .build();
-            allSlots.addAll(generateSlotsForDate(request));
-        });
-
+        List<Slot> allSlots = new ArrayList<>(existingSlots);
+        allSlots.addAll(newSlots);
         return allSlots;
     }
-
-    public void delete(int slotId) {
-        Slot slot = slotRepository.findById(slotId)
-                .orElseThrow(() -> new AppException(ErrorCode.SLOT_NOT_FOUND));
-        Set<SlotDetail> slotDetailsCopy = slot.getSlotDetails();
-        for (SlotDetail detail : slotDetailsCopy) {
-            detail.setSlot(null);
-            slotDetailRepository.deleteById(detail.getId());
-        }
-        slotRepository.delete(slot);
-    }
-
     private Set<SlotDetail> filteredSlotDetailsByTherapist(Slot slot, int therapistId) {
         return slot.getSlotDetails().stream().filter(
                 slotDetail -> slotDetail.getTherapist().getId() == therapistId
