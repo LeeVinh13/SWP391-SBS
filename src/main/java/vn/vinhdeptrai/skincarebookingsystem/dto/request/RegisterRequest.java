@@ -2,6 +2,7 @@ package vn.vinhdeptrai.skincarebookingsystem.dto.request;
 
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Pattern;
 import jakarta.validation.constraints.Size;
 import lombok.*;
 import lombok.experimental.FieldDefaults;
@@ -21,9 +22,10 @@ public class RegisterRequest {
     String password;
     @NotNull
     String confirmPassword;
-    @Email
+    @Email(message = "INVALID_EMAIL_FORMAT")
     String email;
     String fullname;
+    @Pattern(regexp = "^0[0-9]{9}$", message = "INVALID_PHONE_FORMAT")
     String phone;
 
 }

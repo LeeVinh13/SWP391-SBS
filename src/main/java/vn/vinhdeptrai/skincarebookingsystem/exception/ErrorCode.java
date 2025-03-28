@@ -46,7 +46,9 @@ public enum ErrorCode {
     RATING_ALREADY_EXIST(2009,"RATING ALREADY EXIST!", HttpStatus.CONFLICT),
     APPOINTMENT_NOT_APPROVED(2010,"APPOINTMENT NOT APPROVED!", HttpStatus.CONFLICT),
     INVALID_OLD_PASSWORD(2011, "Old password is incorrect", HttpStatus.BAD_REQUEST),
-    CONFIRM_PASSWORD_NOT_MATCH(2012, "New password and confirm password do not match", HttpStatus.BAD_REQUEST);
+    CONFIRM_PASSWORD_NOT_MATCH(2012, "New password and confirm password do not match", HttpStatus.BAD_REQUEST),
+    INVALID_EMAIL_FORMAT(2013, "Email format is invalid", HttpStatus.BAD_REQUEST),
+    INVALID_PHONE_FORMAT(2014, "Phone number must be 10 digits and start by '0'", HttpStatus.BAD_REQUEST);
     public int code;
     public String message;
     public HttpStatusCode statusCode;
