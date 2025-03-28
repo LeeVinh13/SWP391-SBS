@@ -18,13 +18,21 @@ import vn.vinhdeptrai.skincarebookingsystem.validator.ConfirmPasswordConstraint;
 public class RegisterRequest {
     @Size(min = 4, message = "INVALID_USERNAME")
     String username;
+
     @Size(min = 3,message = "INVALID_PASSWORD")
+    @NotNull(message = "INVALID_PASSWORD")
     String password;
-    @NotNull
+
+    @Size(min = 3,message = "INVALID_PASSWORD")
+    @NotNull(message = "INVALID_PASSWORD")
     String confirmPassword;
+
     @Email(message = "INVALID_EMAIL_FORMAT")
     String email;
+
+    @NotNull(message = "INVALID_FULLNAME")
     String fullname;
+
     @Pattern(regexp = "^0[0-9]{9}$", message = "INVALID_PHONE_FORMAT")
     String phone;
 

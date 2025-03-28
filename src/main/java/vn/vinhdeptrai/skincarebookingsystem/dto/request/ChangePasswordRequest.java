@@ -1,6 +1,7 @@
 package vn.vinhdeptrai.skincarebookingsystem.dto.request;
 
 import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
 import lombok.*;
 import lombok.experimental.FieldDefaults;
@@ -12,13 +13,15 @@ import lombok.experimental.FieldDefaults;
 @Builder
 @FieldDefaults(level = AccessLevel.PRIVATE)
 public class ChangePasswordRequest {
-    @NotBlank(message = "Old password is required")
+    @Size(min = 3,message = "INVALID_PASSWORD")
+    @NotNull(message = "INVALID_PASSWORD")
     String oldPassword;
-    
-    @NotBlank(message = "New password is required")
-    @Size(min = 6, message = "New password must be at least 6 characters")
+
+    @Size(min = 3,message = "INVALID_PASSWORD")
+    @NotNull(message = "INVALID_PASSWORD")
     String newPassword;
-    
-    @NotBlank(message = "Confirm password is required")
+
+    @Size(min = 3,message = "INVALID_PASSWORD")
+    @NotNull(message = "INVALID_PASSWORD")
     String confirmPassword;
 } 
