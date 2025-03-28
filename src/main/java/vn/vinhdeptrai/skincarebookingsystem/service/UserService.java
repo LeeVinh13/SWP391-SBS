@@ -40,11 +40,9 @@ public class UserService {
     RoleService roleService;
     RoleRepository roleRepository;
     PasswordEncoder passwordEncoder;
-    private final SlotDetailRepository slotDetailRepository;
-    private final TherapistRepository therapistRepository;
-    private final AppointmentRepository appointmentRepository;
-    @PersistenceContext
-    EntityManager entityManager;
+    SlotDetailRepository slotDetailRepository;
+    TherapistRepository therapistRepository;
+    AppointmentRepository appointmentRepository;
 
     public UserResponse create(UserCreationRequest userCreationRequest) {
         if (userRepository.existsByUsername((userCreationRequest.getUsername()))) {
@@ -70,7 +68,7 @@ public class UserService {
         if (shouldBeTherapist != isTherapist) {
             User newUser = shouldBeTherapist ? new Therapist() : new User();
             newUser.setUsername(user.getUsername());
-            newUser.setPassword(user.getPassword());
+            newUser.setPassword(passwordEncoder.encode(user.getPassword()));
             newUser.setEmail(user.getEmail());
             newUser.setPhone(user.getPhone());
             newUser.setFullname(user.getFullname());
