@@ -111,7 +111,7 @@ public class SlotService {
             throw new AppException(ErrorCode.INVALID_START_DATE);
         }
 
-        if (endDate.isBefore(startDate.plusDays(5))) {
+        if (endDate.isBefore(startDate.plusDays(7))) {
             throw new AppException(ErrorCode.INVALID_END_DATE);
         }
 
