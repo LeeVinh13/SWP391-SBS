@@ -7,6 +7,7 @@ import lombok.experimental.FieldDefaults;
 import org.springframework.stereotype.Service;
 import vn.vinhdeptrai.skincarebookingsystem.dto.request.SlotRequest;
 import vn.vinhdeptrai.skincarebookingsystem.dto.response.SlotResponse;
+import vn.vinhdeptrai.skincarebookingsystem.dto.response.TherapistResponse;
 import vn.vinhdeptrai.skincarebookingsystem.entity.Slot;
 import vn.vinhdeptrai.skincarebookingsystem.entity.SlotDetail;
 import vn.vinhdeptrai.skincarebookingsystem.entity.Therapist;
@@ -54,6 +55,51 @@ public class SlotService {
                 new AppException(ErrorCode.SLOT_NOT_FOUND))
         );
     }
+    public SlotResponse getSlotsWithTherapistsByDate(LocalDate date) {
+        List<Slot> slots = slotRepository.findByDate(date);
+
+        if (slots.isEmpty()) {
+            throw new AppException(ErrorCode.SLOT_NOT_FOUND);
+        }
+
+        Set<Integer> therapistIds = slots.stream()
+                .flatMap(slot -> slot.getSlotDetails().stream())
+                .filter(slotDetail -> slotDetail.getStatus() == SlotStatus.AVAILABLE)
+                .map(slotDetail -> slotDetail.getTherapist().getId())
+                .collect(Collectors.toSet());
+
+        Set<TherapistResponse> therapistResponses = therapistIds.stream()
+                .map(id -> TherapistResponse.builder().id(id).build())
+                .collect(Collectors.toSet());
+
+        return SlotResponse.builder()
+                .date(date)
+                .therapists(therapistResponses)
+                .build();
+    }
+    public List<SlotResponse> getSlotsWithTherapistsByDateRange(LocalDate startDate, LocalDate endDate) {
+        if (endDate.isBefore(startDate)) {
+            throw new AppException(ErrorCode.INVALID_DATE_RANGE);
+        }
+
+        List<SlotResponse> slotResponses = new ArrayList<>();
+        LocalDate date = startDate;
+
+        while (!date.isAfter(endDate)) {
+            try {
+                SlotResponse slotsForDate = getSlotsWithTherapistsByDate(date);
+                slotResponses.add(slotsForDate);
+            } catch (AppException e) {
+                if (e.getErrorCode() != ErrorCode.SLOT_NOT_FOUND) {
+                    throw e;
+                }
+            }
+            date = date.plusDays(1);
+        }
+
+        return slotResponses;
+    }
+
     public List<SlotResponse> getAvailableSlotsByDate(LocalDate date) {
         List<Slot> slots = slotRepository.findByDate(date);
         List<Slot> availableSlots = slots.stream().map(
