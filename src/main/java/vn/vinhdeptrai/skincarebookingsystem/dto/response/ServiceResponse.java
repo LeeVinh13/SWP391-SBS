@@ -20,4 +20,5 @@ public class ServiceResponse {
     String duration;
     String thumbnail;
     ServiceCategoryResponse category;
+    int averageStars;
 }
