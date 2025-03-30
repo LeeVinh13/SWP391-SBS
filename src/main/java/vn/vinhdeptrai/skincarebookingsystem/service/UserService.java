@@ -16,6 +16,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import vn.vinhdeptrai.skincarebookingsystem.constant.PredefinedRole;
 import vn.vinhdeptrai.skincarebookingsystem.dto.request.ChangePasswordRequest;
+import vn.vinhdeptrai.skincarebookingsystem.dto.request.NewPasswordRequest;
 import vn.vinhdeptrai.skincarebookingsystem.dto.request.UserCreationRequest;
 import vn.vinhdeptrai.skincarebookingsystem.dto.request.UserUpdateRequest;
 import vn.vinhdeptrai.skincarebookingsystem.dto.response.UserResponse;
@@ -153,5 +154,16 @@ public class UserService {
         userRepository.save(user);
     }
 
+    public void newPassword(NewPasswordRequest request, int userId) {
+        User user = userRepository.findById(userId).orElseThrow(() -> new AppException(ErrorCode.USER_NOT_FOUND));
 
+        // check new password and confirm password
+        if (!request.getNewPassword().equals(request.getConfirmPassword())) {
+            throw new AppException(ErrorCode.CONFIRM_PASSWORD_NOT_MATCH);
+        }
+
+        // update new password
+        user.setPassword(passwordEncoder.encode(request.getNewPassword()));
+        userRepository.save(user);
+    }
 }

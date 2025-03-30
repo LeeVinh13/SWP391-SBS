@@ -10,6 +10,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
 import lombok.extern.slf4j.Slf4j;
 import vn.vinhdeptrai.skincarebookingsystem.dto.request.ChangePasswordRequest;
+import vn.vinhdeptrai.skincarebookingsystem.dto.request.NewPasswordRequest;
 import vn.vinhdeptrai.skincarebookingsystem.dto.request.UserCreationRequest;
 import vn.vinhdeptrai.skincarebookingsystem.dto.request.UserUpdateRequest;
 import vn.vinhdeptrai.skincarebookingsystem.dto.response.ApiResponse;
@@ -64,6 +65,12 @@ public class UserController {
     @PostMapping("/change-password")
     public ApiResponse<Void> changePassword(@Valid @RequestBody ChangePasswordRequest request) {
         userService.changePassword(request);
+        return ApiResponse.<Void>builder().build();
+    }
+
+    @PostMapping("/new-password/{userId}")
+    public ApiResponse<Void> newPassword(@Valid @RequestBody NewPasswordRequest request, @PathVariable int userId) {
+        userService.newPassword(request, userId);
         return ApiResponse.<Void>builder().build();
     }
 }
