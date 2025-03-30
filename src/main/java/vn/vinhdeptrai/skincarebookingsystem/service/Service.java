@@ -12,6 +12,7 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 import vn.vinhdeptrai.skincarebookingsystem.dto.request.ServiceRequest;
 import vn.vinhdeptrai.skincarebookingsystem.dto.response.ServiceResponse;
+import vn.vinhdeptrai.skincarebookingsystem.dto.response.ServiceWithRatingsResponse;
 import vn.vinhdeptrai.skincarebookingsystem.entity.ServiceCategory;
 import vn.vinhdeptrai.skincarebookingsystem.exception.AppException;
 import vn.vinhdeptrai.skincarebookingsystem.exception.ErrorCode;
@@ -34,6 +35,7 @@ public class Service {
     CloudinaryUtil cloudinaryUtil;
     ServiceCategoryRepository serviceCategoryRepository;
     private final ServiceRecommendationRepository serviceRecommendationRepository;
+    private final RatingService ratingService;
 
     public List<ServiceResponse> getAll() {
         List<vn.vinhdeptrai.skincarebookingsystem.entity.Service> services = serviceRepository.findAll();
@@ -48,6 +50,26 @@ public class Service {
         );;
         return serviceMapper.toServiceResponse(service);
     }
+
+    public ServiceWithRatingsResponse getWithRatingsById(int id) {
+        vn.vinhdeptrai.skincarebookingsystem.entity.Service service = serviceRepository.findById(id).orElseThrow(
+                () -> new AppException(ErrorCode.SERVICE_NOT_FOUND)
+        );;
+
+        ServiceResponse serviceResponse = serviceMapper.toServiceResponse(service);
+        ServiceWithRatingsResponse serviceWithRatingsResponse = new ServiceWithRatingsResponse();
+        serviceWithRatingsResponse.setId(serviceResponse.getId());
+        serviceWithRatingsResponse.setName(serviceResponse.getName());
+        serviceWithRatingsResponse.setDescription(serviceResponse.getDescription());
+        serviceWithRatingsResponse.setCategory(serviceResponse.getCategory());
+        serviceWithRatingsResponse.setPrice(serviceResponse.getPrice());
+        serviceWithRatingsResponse.setDuration(serviceResponse.getDuration());
+        serviceWithRatingsResponse.setThumbnail(serviceResponse.getThumbnail());
+        serviceWithRatingsResponse.setRatings(ratingService.getRatingByService(id));
+
+        return serviceWithRatingsResponse;
+    }
+
     public List<ServiceResponse> getSignatureService() {
         List<vn.vinhdeptrai.skincarebookingsystem.entity.Service> signatureServices = serviceRepository.findByCategory_Signature(true);
         return signatureServices.stream().map(

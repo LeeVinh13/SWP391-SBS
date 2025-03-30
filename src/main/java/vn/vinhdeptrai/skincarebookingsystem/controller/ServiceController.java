@@ -11,6 +11,7 @@ import org.springframework.web.multipart.MultipartFile;
 import vn.vinhdeptrai.skincarebookingsystem.dto.request.ServiceRequest;
 import vn.vinhdeptrai.skincarebookingsystem.dto.response.ApiResponse;
 import vn.vinhdeptrai.skincarebookingsystem.dto.response.ServiceResponse;
+import vn.vinhdeptrai.skincarebookingsystem.dto.response.ServiceWithRatingsResponse;
 import vn.vinhdeptrai.skincarebookingsystem.service.Service;
 
 import java.io.IOException;
@@ -34,6 +35,14 @@ public class ServiceController {
                 .result(service.getById(id))
                 .build();
     }
+
+    @GetMapping("/withRatings/{id}")
+    public ApiResponse<ServiceWithRatingsResponse> getWithRatingsById(@PathVariable int id) {
+        return ApiResponse.<ServiceWithRatingsResponse>builder()
+                .result(service.getWithRatingsById(id))
+                .build();
+    }
+
     @GetMapping("/signature")
     public ApiResponse<List<ServiceResponse>> getSignatureService() {
         return ApiResponse.<List<ServiceResponse>>builder()

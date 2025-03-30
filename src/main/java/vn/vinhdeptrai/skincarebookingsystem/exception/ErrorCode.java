@@ -54,7 +54,7 @@ public enum ErrorCode {
     INVALID_BLOG_CONTENT(2018, "Blog content should not be null!", HttpStatus.BAD_REQUEST),
     INVALID_RATING_STAR(2019, "Star should be from {min} to {max} and cannot be null", HttpStatus.BAD_REQUEST),
     INVALID_FEEDBACK(2020, "Feedback must be less than {max}!", HttpStatus.BAD_REQUEST),
-    INVALID_FULLNAME(2021, "Full name cannot be black!", HttpStatus.BAD_REQUEST),
+    INVALID_FULLNAME(2021, "Full name cannot be blank!", HttpStatus.BAD_REQUEST),
     INVALID_CATEGORY_NAME(2022, "Category name should not be null!", HttpStatus.BAD_REQUEST);
     public int code;
     public String message;
