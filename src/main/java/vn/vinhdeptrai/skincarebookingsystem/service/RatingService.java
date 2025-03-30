@@ -85,6 +85,15 @@ public class RatingService {
         .collect(Collectors.toList());
     }
 
+    public int getRatingCountByService(int serviceId) {
+        double average = ratingRepository.findByServiceId(serviceId).stream()
+                .mapToDouble(Rating::getStars)
+                .average()
+                .orElse(0.0);
+
+        return (int) Math.round(average);
+    }
+
     public List<RatingResponse> getAllRatings() {
         List<Rating> ratings = ratingRepository.findAll();
         return ratings.stream()

@@ -11,6 +11,7 @@ import org.springframework.data.domain.Sort;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 import vn.vinhdeptrai.skincarebookingsystem.dto.request.ServiceRequest;
+import vn.vinhdeptrai.skincarebookingsystem.dto.response.RatingResponse;
 import vn.vinhdeptrai.skincarebookingsystem.dto.response.ServiceResponse;
 import vn.vinhdeptrai.skincarebookingsystem.dto.response.ServiceWithRatingsResponse;
 import vn.vinhdeptrai.skincarebookingsystem.entity.ServiceCategory;
@@ -23,6 +24,7 @@ import vn.vinhdeptrai.skincarebookingsystem.repository.ServiceRepository;
 import vn.vinhdeptrai.skincarebookingsystem.util.CloudinaryUtil;
 
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.List;
 
 @org.springframework.stereotype.Service
@@ -42,7 +44,12 @@ public class Service {
         if (services.isEmpty()) {
             throw new AppException(ErrorCode.SERVICE_NOT_FOUND);
         }
-        return serviceRepository.findAll().stream().map(service -> serviceMapper.toServiceResponse(service)).toList();
+        return services.stream().map(service -> {
+            ServiceResponse response = serviceMapper.toServiceResponse(service);
+            int avgRating = ratingService.getRatingCountByService(service.getId());
+            response.setAverageStars(avgRating);
+            return response;
+        }).toList();
     }
     public ServiceResponse getById(int id) {
         vn.vinhdeptrai.skincarebookingsystem.entity.Service service = serviceRepository.findById(id).orElseThrow(
