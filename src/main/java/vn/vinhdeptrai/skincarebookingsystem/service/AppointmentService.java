@@ -49,7 +49,7 @@ public class AppointmentService {
 
     public List<AppointmentResponse> myHistoricalAppointment() {
         User user = getUser();
-        return appointmentRepository.findByUserAndPaymentStatus(user, PaymentStatus.PAID).stream()
+        List<AppointmentResponse> appointments = appointmentRepository.findByUserAndPaymentStatus(user, PaymentStatus.PAID).stream()
                 .filter(apt -> !isUpcomingAppointment(apt.getSlotDetail().getSlot().getDate()))
                 .map(apt -> {
                         return appointmentMapper.toAppointmentResponse(apt)

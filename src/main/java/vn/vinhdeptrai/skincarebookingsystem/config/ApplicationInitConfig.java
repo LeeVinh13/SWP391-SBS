@@ -35,8 +35,7 @@ public class ApplicationInitConfig {
                 Role adminRole = roleRepository.save(Role.builder().name(PredefinedRole.ADMIN_ROLE).build());
                 User admin = User.builder()
                         .username("admin")
-//                        .password(passwordEncoder.encode("admin"))
-                        .password("password")
+                        .password(passwordEncoder.encode("admin"))
                         .role(Set.of(adminRole))
                         .build();
                 users.add(admin);
@@ -44,8 +43,7 @@ public class ApplicationInitConfig {
                 Role staffRole = roleRepository.save(Role.builder().name(PredefinedRole.STAFF_ROLE).build());
                 User staff = User.builder()
                         .username("staff")
-//                        .password(passwordEncoder.encode("staff"))
-                        .password("password")
+                        .password(passwordEncoder.encode("staff"))
                         .role(Set.of(staffRole))
                         .build();
                 users.add(staff);
@@ -53,8 +51,7 @@ public class ApplicationInitConfig {
                 Role therapistRole = roleRepository.save(Role.builder().name(PredefinedRole.THERAPIST_ROLE).build());
                 User therapist = User.builder()
                         .username("therapist")
-//                        .password(passwordEncoder.encode("therapist"))
-                        .password("password")
+                        .password(passwordEncoder.encode("therapist"))
                         .role(Set.of(therapistRole))
                         .build();
                 users.add(therapist);
@@ -62,8 +59,7 @@ public class ApplicationInitConfig {
                 Role userRole = roleRepository.save(Role.builder().name(PredefinedRole.USER_ROLE).build());
                 User user = User.builder()
                         .username("user")
-//                        .password(passwordEncoder.encode("user"))
-                        .password("password")
+                        .password(passwordEncoder.encode("user"))
                         .role(Set.of(userRole))
                         .build();
                 users.add(user);
@@ -71,4 +67,5 @@ public class ApplicationInitConfig {
             }
         };
     }
+
 }

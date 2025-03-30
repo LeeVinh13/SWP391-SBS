@@ -56,7 +56,7 @@ public class TherapistService {
         Role therapistRole = roleRepository.findByName(PredefinedRole.THERAPIST_ROLE).orElseThrow(
                 () -> new AppException(ErrorCode.ROLE_NOT_FOUND));
         Therapist therapist = therapistMapper.toTherapist(therapistRequest);
-//        therapist.setPassword(passwordEncoder.encode(therapistRequest.getPassword()));
+        therapist.setPassword(passwordEncoder.encode(therapistRequest.getPassword()));
         therapist.setImage(cloudinaryUtil.uploadImage(file));
         therapist.setRole(Set.of(therapistRole));
 
@@ -67,7 +67,7 @@ public class TherapistService {
                 () -> new AppException(ErrorCode.THERAPIST_NOT_FOUND)
         );
         therapistMapper.updateTherapist(therapist,therapistRequest);
-//        therapist.setPassword(passwordEncoder.encode(therapistRequest.getPassword()));
+        therapist.setPassword(passwordEncoder.encode(therapistRequest.getPassword()));
         if(file != null){
             therapist.setImage(cloudinaryUtil.uploadImage(file));
         }

@@ -12,6 +12,7 @@ import vn.vinhdeptrai.skincarebookingsystem.entity.SlotDetail;
 import vn.vinhdeptrai.skincarebookingsystem.entity.Therapist;
 import vn.vinhdeptrai.skincarebookingsystem.enums.SlotStatus;
 
+import java.time.LocalDate;
 import java.util.List;
 import java.util.Optional;
 import java.util.Set;
@@ -26,4 +27,6 @@ public interface SlotDetailRepository extends JpaRepository<SlotDetail, Integer>
     @Modifying
     @Query("DELETE FROM SlotDetail sd WHERE sd.therapist.id = :therapistId")
     void deleteAllByTherapistId(@Param("therapistId") int therapistId);
+
+    List<SlotDetail> findByTherapistAndSlot_Date(Therapist therapist, LocalDate slotDate);
 }

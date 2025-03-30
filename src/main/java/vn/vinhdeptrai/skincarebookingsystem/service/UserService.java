@@ -1,6 +1,8 @@
 package vn.vinhdeptrai.skincarebookingsystem.service;
 
 import com.nimbusds.jose.proc.SecurityContext;
+import jakarta.persistence.EntityManager;
+import jakarta.persistence.PersistenceContext;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
@@ -14,6 +16,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import vn.vinhdeptrai.skincarebookingsystem.constant.PredefinedRole;
 import vn.vinhdeptrai.skincarebookingsystem.dto.request.ChangePasswordRequest;
+import vn.vinhdeptrai.skincarebookingsystem.dto.request.NewPasswordRequest;
 import vn.vinhdeptrai.skincarebookingsystem.dto.request.UserCreationRequest;
 import vn.vinhdeptrai.skincarebookingsystem.dto.request.UserUpdateRequest;
 import vn.vinhdeptrai.skincarebookingsystem.dto.response.UserResponse;
@@ -38,47 +41,71 @@ public class UserService {
     RoleService roleService;
     RoleRepository roleRepository;
     PasswordEncoder passwordEncoder;
-    private final SlotDetailRepository slotDetailRepository;
-    private final TherapistRepository therapistRepository;
-    private final AppointmentRepository appointmentRepository;
+    SlotDetailRepository slotDetailRepository;
+    TherapistRepository therapistRepository;
+    AppointmentRepository appointmentRepository;
 
     public UserResponse create(UserCreationRequest userCreationRequest) {
         if (userRepository.existsByUsername((userCreationRequest.getUsername()))) {
             throw new AppException(ErrorCode.USER_EXISTED);
         }
         User user = userMapper.toUser(userCreationRequest);
-        Role role = roleRepository.findByName(PredefinedRole.USER_ROLE).orElseThrow(
-                () -> new AppException(ErrorCode.ROLE_NOT_FOUND));
+        Role role = roleRepository.findByName(PredefinedRole.USER_ROLE).orElseThrow(() -> new AppException(ErrorCode.ROLE_NOT_FOUND));
         user.setRole(Set.of(role));
         user.setPassword(passwordEncoder.encode(userCreationRequest.getPassword()));
         userRepository.save(user);
         return userMapper.toUserResponse(user);
     }
 
-    public UserResponse update(int id, UserUpdateRequest userUpdateRequest) {
-        User user = userRepository.findById(id).orElseThrow(() -> new AppException(ErrorCode.USER_NOT_FOUND));
-        userMapper.updateUser(user, userUpdateRequest);
-//        if (userUpdateRequest.getPassword() != null && !userUpdateRequest.getPassword().isEmpty()) {
-//            user.setPassword(passwordEncoder.encode(userUpdateRequest.getPassword()));
-//        }
-        if (userUpdateRequest.getRole() != null) {
-            Set<Role> roles = userUpdateRequest.getRole().stream()
+    @Transactional
+    public UserResponse update(int id, UserUpdateRequest request) {
+        User user = userRepository.findById(id)
+                .orElseThrow(() -> new AppException(ErrorCode.USER_NOT_FOUND));
+
+        boolean shouldBeTherapist = request.getRole() != null && request.getRole().contains(PredefinedRole.THERAPIST_ROLE);
+        boolean isTherapist = user instanceof Therapist;
+
+        // Nếu cần đổi giữa User <-> Therapist
+        if (shouldBeTherapist != isTherapist) {
+            User newUser = shouldBeTherapist ? new Therapist() : new User();
+            newUser.setUsername(user.getUsername());
+            newUser.setPassword(passwordEncoder.encode(user.getPassword()));
+            newUser.setEmail(user.getEmail());
+            newUser.setPhone(user.getPhone());
+            newUser.setFullname(user.getFullname());
+
+            Set<Role> roles = request.getRole().stream()
                     .map(roleName -> roleRepository.findByName(roleName)
                             .orElseThrow(() -> new AppException(ErrorCode.ROLE_NOT_FOUND)))
                     .collect(Collectors.toSet());
-            user.setRole((roles));
+            newUser.setRole(roles);
+
+            if (shouldBeTherapist) therapistRepository.save((Therapist) newUser);
+            else userRepository.save(newUser);
+
+            userRepository.delete(user);
+            return userMapper.toUserResponse(newUser);
         }
-        return userMapper.toUserResponse(userRepository.save(user));
+
+        userMapper.updateUser(user, request);
+        user.setPassword(passwordEncoder.encode(user.getPassword()));
+        if (request.getRole() != null) {
+            Set<Role> roles = request.getRole().stream()
+                    .map(roleName -> roleRepository.findByName(roleName)
+                            .orElseThrow(() -> new AppException(ErrorCode.ROLE_NOT_FOUND)))
+                    .collect(Collectors.toSet());
+            user.setRole(roles);
+        }
+        userRepository.save(user);
+        return userMapper.toUserResponse(user);
     }
 
     //    @PreAuthorize("hasRole('ADMIN')")
     @Transactional
     public void delete(int id) {
-        User user = userRepository.findById(id)
-                .orElseThrow(() -> new AppException(ErrorCode.USER_NOT_FOUND));
+        User user = userRepository.findById(id).orElseThrow(() -> new AppException(ErrorCode.USER_NOT_FOUND));
         if (user.getRole().stream().anyMatch(role -> role.getName().equals(PredefinedRole.THERAPIST_ROLE))) {
-            Therapist therapist = therapistRepository.findById(id)
-                    .orElseThrow(() -> new AppException(ErrorCode.THERAPIST_NOT_FOUND));
+            Therapist therapist = therapistRepository.findById(id).orElseThrow(() -> new AppException(ErrorCode.THERAPIST_NOT_FOUND));
             appointmentRepository.deleteAppointmentsByTherapistId(therapist.getId());
             slotDetailRepository.deleteAllByTherapistId(therapist.getId());
             therapistRepository.delete(therapist);
@@ -110,13 +137,25 @@ public class UserService {
     public void changePassword(ChangePasswordRequest request) {
         // current user
         String username = SecurityContextHolder.getContext().getAuthentication().getName();
-        User user = userRepository.findByUsername(username)
-                .orElseThrow(() -> new AppException(ErrorCode.USER_NOT_FOUND));
+        User user = userRepository.findByUsername(username).orElseThrow(() -> new AppException(ErrorCode.USER_NOT_FOUND));
 
         // check old password
         if (!passwordEncoder.matches(request.getOldPassword(), user.getPassword())) {
             throw new AppException(ErrorCode.INVALID_OLD_PASSWORD);
         }
+
+        // check new password and confirm password
+        if (!request.getNewPassword().equals(request.getConfirmPassword())) {
+            throw new AppException(ErrorCode.CONFIRM_PASSWORD_NOT_MATCH);
+        }
+
+        // update new password
+        user.setPassword(passwordEncoder.encode(request.getNewPassword()));
+        userRepository.save(user);
+    }
+
+    public void newPassword(NewPasswordRequest request, int userId) {
+        User user = userRepository.findById(userId).orElseThrow(() -> new AppException(ErrorCode.USER_NOT_FOUND));
 
         // check new password and confirm password
         if (!request.getNewPassword().equals(request.getConfirmPassword())) {

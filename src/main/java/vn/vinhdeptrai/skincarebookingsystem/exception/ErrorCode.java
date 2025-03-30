@@ -9,7 +9,7 @@ public enum ErrorCode {
     USER_EXISTED(1001, "User already existed!", HttpStatus.CONFLICT),
 
     INVALID_USERNAME(1002, "Username must be at least {min} characters", HttpStatus.BAD_REQUEST),
-    INVALID_PASSWORD(1003, "Password must be at least {min} characters", HttpStatus.BAD_REQUEST),
+    INVALID_PASSWORD(1003, "Password must be at least {min} characters and not null", HttpStatus.BAD_REQUEST),
     INVALID_CONFIRM_PASSWORD(1004, "Confirm password and password do not match", HttpStatus.BAD_REQUEST),
 
     UNAUTHENTICATED(1005, "Unauthenticated!", HttpStatus.UNAUTHORIZED),
@@ -31,6 +31,7 @@ public enum ErrorCode {
 
     INVALID_START_DATE(1016, "Start date cannot in the past", HttpStatus.BAD_REQUEST),
     INVALID_END_DATE(1017, "End date is more than 6 days after start date", HttpStatus.BAD_REQUEST),
+    INVALID_DATE_RANGE(1018, "Date range is invalid", HttpStatus.BAD_REQUEST),
 
     QUIZ_NOT_FOUND(2000, "Quiz not found!", HttpStatus.NOT_FOUND),
     QUESTION_NOT_FOUND(2001, "Question not found!", HttpStatus.NOT_FOUND),
@@ -39,13 +40,22 @@ public enum ErrorCode {
     ANSWER_NOT_FOUND(2004, "Answer not found!", HttpStatus.NOT_FOUND),
     SERVICE_RECOMMENDATION_NOT_FOUND(2005, "Service recommendation not found!", HttpStatus.NOT_FOUND),
     SERVICE_RECOMMENDATION_EXISTED(2006, "Service recommendation existed!", HttpStatus.CONFLICT),
-  
     BLOG_NOT_FOUND(2007,"BLOG NOT FOUND!", HttpStatus.NOT_FOUND),
     RATING_NOT_FOUND(2008,"RATING NOT FOUND!", HttpStatus.NOT_FOUND),
     RATING_ALREADY_EXIST(2009,"RATING ALREADY EXIST!", HttpStatus.CONFLICT),
     APPOINTMENT_NOT_APPROVED(2010,"APPOINTMENT NOT APPROVED!", HttpStatus.CONFLICT),
     INVALID_OLD_PASSWORD(2011, "Old password is incorrect", HttpStatus.BAD_REQUEST),
-    CONFIRM_PASSWORD_NOT_MATCH(2012, "New password and confirm password do not match", HttpStatus.BAD_REQUEST);
+    CONFIRM_PASSWORD_NOT_MATCH(2012, "New password and confirm password do not match", HttpStatus.BAD_REQUEST),
+    INVALID_EMAIL_FORMAT(2013, "Email format is invalid", HttpStatus.BAD_REQUEST),
+    INVALID_PHONE_FORMAT(2014, "Phone number must be 10 digits and start by '0'", HttpStatus.BAD_REQUEST),
+    ANSWER_SCORE_NOT_NULL(2015, "Score of answer should not be empty!", HttpStatus.BAD_REQUEST),
+    ANSWER_NOT_NULL(2016, "Answer should not be null!", HttpStatus.BAD_REQUEST),
+    INVALID_BLOG_TITLE(2017, "Blog title size must be less than {max} and not null!", HttpStatus.BAD_REQUEST),
+    INVALID_BLOG_CONTENT(2018, "Blog content should not be null!", HttpStatus.BAD_REQUEST),
+    INVALID_RATING_STAR(2019, "Star should be from {min} to {max} and cannot be null", HttpStatus.BAD_REQUEST),
+    INVALID_FEEDBACK(2020, "Feedback must be less than {max}!", HttpStatus.BAD_REQUEST),
+    INVALID_FULLNAME(2021, "Full name cannot be black!", HttpStatus.BAD_REQUEST),
+    INVALID_CATEGORY_NAME(2022, "Category name should not be null!", HttpStatus.BAD_REQUEST);
     public int code;
     public String message;
     public HttpStatusCode statusCode;
