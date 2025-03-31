@@ -23,6 +23,7 @@ import vn.vinhdeptrai.skincarebookingsystem.dto.response.UserResponse;
 import vn.vinhdeptrai.skincarebookingsystem.entity.*;
 import vn.vinhdeptrai.skincarebookingsystem.exception.AppException;
 import vn.vinhdeptrai.skincarebookingsystem.exception.ErrorCode;
+import vn.vinhdeptrai.skincarebookingsystem.mapper.TherapistMapper;
 import vn.vinhdeptrai.skincarebookingsystem.mapper.UserMapper;
 import vn.vinhdeptrai.skincarebookingsystem.repository.*;
 import vn.vinhdeptrai.skincarebookingsystem.service.RoleService;
@@ -44,7 +45,7 @@ public class UserService {
     SlotDetailRepository slotDetailRepository;
     TherapistRepository therapistRepository;
     AppointmentRepository appointmentRepository;
-
+    TherapistMapper therapistMapper;
     public UserResponse create(UserCreationRequest userCreationRequest) {
         if (userRepository.existsByUsername((userCreationRequest.getUsername()))) {
             throw new AppException(ErrorCode.USER_EXISTED);
@@ -116,6 +117,13 @@ public class UserService {
     public UserResponse myInfor() {
         String name = SecurityContextHolder.getContext().getAuthentication().getName();
         User user = userRepository.findByUsername(name).orElseThrow(() -> new AppException(ErrorCode.USER_NOT_FOUND));
+        boolean isTherapist = user.getRole().stream().anyMatch(role -> role.getName().equals(PredefinedRole.THERAPIST_ROLE));
+        if(isTherapist) {
+            Therapist therapist = therapistRepository.findById(user.getId()).orElseThrow(
+                    () -> new AppException(ErrorCode.THERAPIST_NOT_FOUND)
+            );
+            return therapistMapper.toTherapistResponse(therapist);
+        }
         return userMapper.toUserResponse(user);
     }
 
