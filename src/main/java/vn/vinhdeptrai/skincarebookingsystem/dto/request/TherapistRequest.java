@@ -18,5 +18,4 @@ import java.util.List;
 public class TherapistRequest {
     String username, password, fullname, phone, email,description;
     int experience;
-//    MultipartFile image;
 }

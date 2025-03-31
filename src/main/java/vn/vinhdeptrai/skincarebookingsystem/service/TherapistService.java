@@ -67,7 +67,9 @@ public class TherapistService {
                 () -> new AppException(ErrorCode.THERAPIST_NOT_FOUND)
         );
         therapistMapper.updateTherapist(therapist,therapistRequest);
-        therapist.setPassword(passwordEncoder.encode(therapistRequest.getPassword()));
+        if(therapistRequest.getPassword() != null){
+            therapist.setPassword(passwordEncoder.encode(therapistRequest.getPassword()));
+        }
         if(file != null){
             therapist.setImage(cloudinaryUtil.uploadImage(file));
         }
