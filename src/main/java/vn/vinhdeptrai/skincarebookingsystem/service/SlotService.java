@@ -102,6 +102,12 @@ public class SlotService {
 
     public List<SlotResponse> getAvailableSlotsByDate(LocalDate date) {
         List<Slot> slots = slotRepository.findByDate(date);
+        if(date.equals(LocalDate.now())) {
+            LocalTime time = LocalTime.now();
+            slots = slots.stream()
+                    .filter(slot -> !slot.getTime().isBefore(time))
+                    .toList();
+        }
         List<Slot> availableSlots = slots.stream().map(
                         slot -> {
                             Set<SlotDetail> slotDetails = slotDetailRepository.findBySlotAndStatus(slot, SlotStatus.AVAILABLE);
