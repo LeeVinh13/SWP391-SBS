@@ -76,20 +76,20 @@ public class SlotController {
         return ApiResponse.<Void>builder()
                 .build();
     }
-    @GetMapping("/by-date")
-    public ApiResponse<SlotResponse> getSlotsByDate(@RequestParam("date") LocalDate date) {
-        return ApiResponse.<SlotResponse>builder()
-                .result(slotService.getSlotsWithTherapistsByDate(date))
-                .build();
-    }
-
-    @GetMapping("/by-date-range")
-    public ApiResponse<List<SlotResponse>> getSlotsByDateRange(@RequestParam("startDate") LocalDate startDate,
-                                                               @RequestParam("endDate") LocalDate endDate) {
-        return ApiResponse.<List<SlotResponse>>builder()
-                .result(slotService.getSlotsWithTherapistsByDateRange(startDate, endDate))
-                .build();
-    }
+//    @GetMapping("/by-date")
+//    public ApiResponse<SlotResponse> getSlotsByDate(@RequestParam("date") LocalDate date) {
+//        return ApiResponse.<SlotResponse>builder()
+//                .result(slotService.getSlotsWithTherapistsByDate(date))
+//                .build();
+//    }
+//
+//    @GetMapping("/by-date-range")
+//    public ApiResponse<List<SlotResponse>> getSlotsByDateRange(@RequestParam("startDate") LocalDate startDate,
+//                                                               @RequestParam("endDate") LocalDate endDate) {
+//        return ApiResponse.<List<SlotResponse>>builder()
+//                .result(slotService.getSlotsWithTherapistsByDateRange(startDate, endDate))
+//                .build();
+//    }
 
     @PostMapping("/generate/day")
     public ApiResponse<List<SlotResponse>> generateSlotForDay(@RequestBody SlotRequest slotRequest) {
