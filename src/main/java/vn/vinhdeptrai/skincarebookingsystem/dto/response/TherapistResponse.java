@@ -12,13 +12,13 @@ import java.util.Set;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-@SuperBuilder
+@Builder
 @FieldDefaults(level = AccessLevel.PRIVATE)
 @JsonInclude(JsonInclude.Include.NON_NULL)
-public class TherapistResponse extends UserResponse {
+public class TherapistResponse {
+    int id;
+    String username, password, fullname, phone, email,description,image;
     @JsonInclude(JsonInclude.Include.NON_DEFAULT)
     int experience;
-    String image;
-    String description;
     SlotStatus status;
 }

@@ -122,7 +122,12 @@ public class UserService {
             Therapist therapist = therapistRepository.findById(user.getId()).orElseThrow(
                     () -> new AppException(ErrorCode.THERAPIST_NOT_FOUND)
             );
-            return therapistMapper.toTherapistResponse(therapist);
+            return UserResponse.builder()
+                    .id(therapist.getId())
+                    .fullname(therapist.getFullname())
+                    .email(therapist.getEmail())
+                    .image(therapist.getImage())
+                    .build();
         }
         return userMapper.toUserResponse(user);
     }
