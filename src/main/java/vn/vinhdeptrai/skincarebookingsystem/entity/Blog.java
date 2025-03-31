@@ -21,6 +21,8 @@ public class Blog {
 
     String title;
 
+    @Lob
+    @Column(columnDefinition = "LONGTEXT")
     String content;
 
     String thumbnail; // Lưu URL ảnh từ Cloudinary
