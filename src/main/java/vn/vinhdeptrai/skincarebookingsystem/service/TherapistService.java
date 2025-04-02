@@ -70,7 +70,7 @@ public class TherapistService {
         if(therapistRequest.getPassword() != null){
             therapist.setPassword(passwordEncoder.encode(therapistRequest.getPassword()));
         }
-        if(file != null){
+        if(file != null && !file.isEmpty()){
             therapist.setImage(cloudinaryUtil.uploadImage(file));
         }
         if(therapistRequest.getExperience() <= 0){
