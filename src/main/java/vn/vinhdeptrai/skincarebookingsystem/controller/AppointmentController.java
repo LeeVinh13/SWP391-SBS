@@ -6,6 +6,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
 import org.springframework.web.bind.annotation.*;
 import vn.vinhdeptrai.skincarebookingsystem.dto.request.AppointmentRequest;
+import vn.vinhdeptrai.skincarebookingsystem.dto.request.AppointmentTimeRequest;
 import vn.vinhdeptrai.skincarebookingsystem.dto.response.ApiResponse;
 import vn.vinhdeptrai.skincarebookingsystem.dto.response.AppointmentResponse;
 import vn.vinhdeptrai.skincarebookingsystem.enums.AppointmentStatus;
@@ -55,6 +56,12 @@ public class AppointmentController {
     public ApiResponse<AppointmentResponse> update(@RequestBody AppointmentRequest appointmentRequest, @PathVariable int id) {
         return ApiResponse.<AppointmentResponse>builder()
                 .result(appointmentService.update(appointmentRequest,id))
+                .build();
+    }
+    @PutMapping("/updateTime/{id}")
+    public ApiResponse<AppointmentResponse> updateTime(@RequestBody AppointmentTimeRequest appointmentTimeRequest, @PathVariable int id) {
+        return ApiResponse.<AppointmentResponse>builder()
+                .result(appointmentService.updateTime(appointmentTimeRequest,id))
                 .build();
     }
     @PutMapping("/update-status/{id}")

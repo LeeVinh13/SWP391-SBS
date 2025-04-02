@@ -69,6 +69,12 @@ public class SlotController {
                 .result(slotService.getTherapistSchedule(therapistId,startDate,endDate))
                 .build();
     }
+    @GetMapping("/therapistBy/{therapistId}")
+    public ApiResponse<List<SlotResponse>> getSlotForTherapist(@PathVariable("therapistId") int therapistId) {
+        return ApiResponse.<List<SlotResponse>>builder()
+                .result(slotService.getSlotByTherapist(therapistId))
+                .build();
+    }
     @GetMapping("/therapist/delete")
     public ApiResponse<Void> deleteScheduleByTherapistAndDate(@RequestParam("therapistId") int therapistId,
                                                               @RequestParam("date") LocalDate date) {

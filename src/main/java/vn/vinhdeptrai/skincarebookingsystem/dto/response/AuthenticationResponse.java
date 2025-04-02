@@ -14,5 +14,7 @@ import java.util.Set;
 public class AuthenticationResponse {
     boolean authenticated;
     String token;
+    String fullName;
+    int id;
     Set<RoleResponse> roles;
 }

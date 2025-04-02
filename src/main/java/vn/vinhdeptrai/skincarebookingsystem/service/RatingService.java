@@ -59,6 +59,8 @@ public class RatingService {
         Rating rating = ratingMapper.toRating(request);
         rating = Rating.builder()
         .appointment(appointment)
+        .stars(request.getStars())
+        .feedback(request.getFeedback())
         .createdAt(LocalDateTime.now())
         .updatedAt(LocalDateTime.now())
         .build();

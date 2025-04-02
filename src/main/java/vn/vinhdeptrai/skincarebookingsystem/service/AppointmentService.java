@@ -7,6 +7,7 @@ import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import vn.vinhdeptrai.skincarebookingsystem.dto.request.AppointmentRequest;
+import vn.vinhdeptrai.skincarebookingsystem.dto.request.AppointmentTimeRequest;
 import vn.vinhdeptrai.skincarebookingsystem.dto.response.AppointmentResponse;
 import vn.vinhdeptrai.skincarebookingsystem.entity.*;
 import vn.vinhdeptrai.skincarebookingsystem.enums.AppointmentStatus;
@@ -85,7 +86,15 @@ public class AppointmentService {
         calculateAndSetAmount(appointment, service);
         return appointmentMapper.toAppointmentResponse(appointmentRepository.save(appointment));
     }
-
+    public AppointmentResponse updateTime(AppointmentTimeRequest appointmentTimeRequest, int appointmentId) {
+        Appointment appointment = getAppointmentById(appointmentId);
+        SlotDetail newSlotDetail = getAvailableSlotDetail(appointmentTimeRequest.getSlotId(), appointmentTimeRequest.getTherapistId());
+        updateSlotDetailStatus(appointment.getSlotDetail(), SlotStatus.AVAILABLE);
+        appointment.setSlotDetail(newSlotDetail);
+        appointment.setUpdateAt(LocalDateTime.now());
+        return appointmentMapper.toAppointmentResponse(appointmentRepository.save(appointment));
+    }
+    
     public AppointmentResponse update(AppointmentRequest appointmentRequest, int appointmentId) {
         Appointment appointment = getAppointmentById(appointmentId);
         SlotDetail newSlotDetail = getAvailableSlotDetail(appointmentRequest.getSlotId(), appointmentRequest.getTherapistId());
@@ -208,4 +217,5 @@ public class AppointmentService {
             delete(appointment.getId());
         }
     }
+
 }

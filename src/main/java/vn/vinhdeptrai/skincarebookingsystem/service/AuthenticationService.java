@@ -77,6 +77,8 @@ public class AuthenticationService {
                 .authenticated(true)
                 .token(token)
                 .roles(roleResponses)
+                .fullName(user.getFullname())
+                .id(user.getId())
                 .build();
     }
     public RegisterResponse register(RegisterRequest registerRequest) {

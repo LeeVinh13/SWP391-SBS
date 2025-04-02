@@ -15,6 +15,5 @@ public interface AppointmentMapper {
     @Mapping(target = "date", source = "slotDetail.slot.date")
     @Mapping(target = "time", source = "slotDetail.slot.time")
     @Mapping(target="therapist", source = "slotDetail.therapist")
-    @Mapping(target="service", source = "service")
     AppointmentResponse toAppointmentResponse(Appointment appointment);
 }

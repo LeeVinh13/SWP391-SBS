@@ -9,7 +9,7 @@ import vn.vinhdeptrai.skincarebookingsystem.enums.PaymentStatus;
 
 import java.time.LocalDate;
 import java.time.LocalTime;
-
+import java.time.LocalDateTime;
 @Data
 @Builder
 @NoArgsConstructor
@@ -28,4 +28,5 @@ public class AppointmentResponse {
     TherapistResponse therapist;
     AppointmentStatus appointmentStatus;
     PaymentStatus paymentStatus;
+    LocalDateTime cancelAt;
 }

@@ -77,6 +77,14 @@ public class SlotService {
                 .therapists(therapistResponses)
                 .build();
     }
+    public List<SlotResponse> getSlotByTherapist(int therapistId) {
+        Therapist therapist = therapistRepository.findById(therapistId).orElseThrow(
+                () -> new AppException(ErrorCode.THERAPIST_NOT_FOUND)
+        );
+        List<Slot> slots = slotRepository.findBySlotDetails_Therapist(therapist);
+        System.out.println("assss" + slots);
+        return slots.stream().map(slot -> slotMapper.toSlotResponse(slot)).collect(Collectors.toList());
+    }
     public List<SlotResponse> getSlotsWithTherapistsByDateRange(LocalDate startDate, LocalDate endDate) {
         if (endDate.isBefore(startDate)) {
             throw new AppException(ErrorCode.INVALID_DATE_RANGE);

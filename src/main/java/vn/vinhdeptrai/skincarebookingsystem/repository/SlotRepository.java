@@ -16,6 +16,7 @@ import java.util.Optional;
 @Repository
 
 public interface SlotRepository extends JpaRepository<Slot, Integer> {
+    List<Slot> findBySlotDetails_Therapist(Therapist therapist);
     List<Slot> findByDate(LocalDate date);
     List<Slot> findBySlotDetails_TherapistAndSlotDetails_Status(Therapist slotDetailsTherapist, SlotStatus slotDetailsStatus);
     List<Slot> findByDateAndSlotDetails_Therapist(LocalDate date, Therapist slotDetailsTherapist);
