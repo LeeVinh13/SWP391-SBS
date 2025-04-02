@@ -11,6 +11,7 @@ public interface TherapistMapper {
     @Mapping(target = "image", ignore = true)
     Therapist toTherapist(TherapistRequest therapistRequest);
     TherapistResponse toTherapistResponse(Therapist therapist);
+    @Mapping(target = "experience",ignore = true)
     @Mapping(target = "image", ignore = true)
     @BeanMapping(nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.IGNORE)
     void updateTherapist(@MappingTarget Therapist therapist, TherapistRequest therapistRequest);

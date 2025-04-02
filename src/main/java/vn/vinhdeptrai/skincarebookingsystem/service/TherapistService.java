@@ -73,6 +73,9 @@ public class TherapistService {
         if(file != null){
             therapist.setImage(cloudinaryUtil.uploadImage(file));
         }
+        if(therapistRequest.getExperience() <= 0){
+            therapist.setExperience(therapist.getExperience());
+        }
         return therapistMapper.toTherapistResponse(therapistRepository.save(therapist));
     }
     public void delete(int id) throws AppException {
