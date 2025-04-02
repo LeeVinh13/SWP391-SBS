@@ -73,8 +73,10 @@ public class TherapistService {
         if(file != null && !file.isEmpty()){
             therapist.setImage(cloudinaryUtil.uploadImage(file));
         }
-        if(therapistRequest.getExperience() <= 0){
+        if(therapistRequest.getExperience() < 0){
             therapist.setExperience(therapist.getExperience());
+        }else{
+            therapist.setExperience(therapistRequest.getExperience());
         }
         return therapistMapper.toTherapistResponse(therapistRepository.save(therapist));
     }
