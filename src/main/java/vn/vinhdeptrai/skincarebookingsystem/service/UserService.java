@@ -74,22 +74,28 @@ public class UserService {
             newUser.setEmail(user.getEmail());
             newUser.setPhone(user.getPhone());
             newUser.setFullname(user.getFullname());
-
-            Set<Role> roles = request.getRole().stream()
-                    .map(roleName -> roleRepository.findByName(roleName)
-                            .orElseThrow(() -> new AppException(ErrorCode.ROLE_NOT_FOUND)))
-                    .collect(Collectors.toSet());
-            newUser.setRole(roles);
-
-            if (shouldBeTherapist) therapistRepository.save((Therapist) newUser);
-            else userRepository.save(newUser);
+            if(request.getRole() != null){
+                Set<Role> roles = request.getRole().stream()
+                        .map(roleName -> roleRepository.findByName(roleName)
+                                .orElseThrow(() -> new AppException(ErrorCode.ROLE_NOT_FOUND)))
+                        .collect(Collectors.toSet());
+                newUser.setRole(roles);
+            } else {
+                newUser.setRole(user.getRole()); // Keep existing roles if none provided
+            }
+            if (shouldBeTherapist)
+                therapistRepository.save((Therapist) newUser);
+            else
+                userRepository.save(newUser);
 
             userRepository.delete(user);
             return userMapper.toUserResponse(newUser);
         }
 
         userMapper.updateUser(user, request);
-        user.setPassword(passwordEncoder.encode(user.getPassword()));
+        if(request.getPassword() != null){
+            user.setPassword(passwordEncoder.encode(user.getPassword()));
+        }
         if (request.getRole() != null) {
             Set<Role> roles = request.getRole().stream()
                     .map(roleName -> roleRepository.findByName(roleName)
