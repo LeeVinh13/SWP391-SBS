@@ -1,0 +1,35 @@
+services:                           #nơi định nghĩa các container(service) muốn chạy
+  be:                       #ten container
+    build:                          #build cua service
+      context: .                    #"." là lấy tất cả file cùng cấp với docker-compose.yaml file để build
+      dockerfile: Dockerfile        # Đường dẫn tới Dockerfile
+    image: vinh6t7988/sbsystem:latest               # Tên image sau khi build
+    container_name: sbsystem
+    ports:
+      - "8080:8080"                 #map port 8080 trong container ra 8080 trên máy host
+    environment:                    #Các biến môi trường truyền vào container
+      SPRING_DATASOURCE_URL: jdbc:mysql://mysql:3306/sbs     # Kết nối tới MySQL bằng tên container
+      SPRING_DATASOURCE_USERNAME: root
+      SPRING_DATASOURCE_PASSWORD: 12345
+    depends_on:
+      - mysql
+    networks:
+      - backend-networks                #Tham gia vào cùng mạng ảo để các container "nhìn thấy" nhau
+  mysql:
+    image: mysql:8.0
+    container_name: mysql
+    environment:
+      MYSQL_ROOT_PASSWORD: 12345
+      MYSQL_DATABASE: sbs
+    ports:
+      - "3309:3306"                      #Map cổng 3306 trong container ra cổng 3309 trên máy host
+    volumes:
+      - mysql-data:/var/lib/mysql        #Gắn volume
+    networks:
+      - backend-networks
+
+networks:
+  backend-networks:                     #Khai báo mạng ảo dùng chung cho 2 container
+    driver: bridge                      #Loại mạng bridge (mặc định)
+volumes:
+  mysql-data:                           # Khai báo volume tên là mysql-data
