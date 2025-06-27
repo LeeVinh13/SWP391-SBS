@@ -13,6 +13,6 @@ RUN mvn clean package -DskipTests && rm -rf /root/.m2/repository
 FROM  amazoncorretto:21.0.4
 WORKDIR /app
 #COPY --from=build /app/SWP391-SBS/target/*.jar SWP391-SBS.jar
-COPY --from=build /app/target/*.jar SkincareBookingSystem-0.0.1-SNAPSHOT.jar.jar
+COPY --from=build /app/target/*.jar SWP391-SBS.jar
 EXPOSE 8080
-ENTRYPOINT ["java","-jar","SkincareBookingSystem-0.0.1-SNAPSHOT.jar.jar"]
+ENTRYPOINT ["java","-jar","SWP391-SBS.jar"]
